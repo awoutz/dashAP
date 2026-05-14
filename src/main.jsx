@@ -132,25 +132,14 @@ function cleanBetPayload(bet) {
 
 function cleanResultPayload(result) {
   return {
-    birth_date: result.birth_date || null,
-    sex: result.sex || null,
-    first_name: result.first_name?.trim() || null,
-    weight: toNumberOrNull(result.weight),
-    height: toNumberOrNull(result.height),
-    show_result: Boolean(result.show_result),
+    pin: undefined,
+    p_birth_date: result.birth_date || null,
+    p_sex: result.sex || null,
+    p_first_name: result.first_name?.trim() || null,
+    p_weight: toNumberOrNull(result.weight),
+    p_height: toNumberOrNull(result.height),
+    p_show_result: Boolean(result.show_result),
   };
-}
-
-async function adminRequest(action, pin, payload = {}) {
-  const response = await fetch('/api/admin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action, pin, ...payload }),
-  });
-
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || 'Action admin impossible');
-  return data;
 }
 
 function Icon({ children }) {
@@ -238,47 +227,49 @@ function App() {
 
   async function unlockAdmin(event) {
     event.preventDefault();
-    try {
-      await adminRequest('check_pin', adminPinInput);
-      setAdminMode(true);
-      setAdminPin(adminPinInput);
-      setAdminPinInput('');
-      setMessage('Mode admin activé.');
-    } catch (error) {
-      setMessage(error.message);
+    if (!supabase) return;
+    const { data, error } = await supabase.rpc('check_admin_pin', { pin: adminPinInput });
+    if (error || data !== true) {
+      setMessage('PIN admin incorrect.');
+      return;
     }
+    setAdminMode(true);
+    setAdminPin(adminPinInput);
+    setAdminPinInput('');
+    setMessage('Mode admin activé.');
   }
 
   async function saveResult() {
-    try {
-      await adminRequest('save_result', adminPin, { result: cleanResultPayload(result) });
-      setMessage('Résultat final enregistré.');
-      await loadData();
-    } catch (error) {
+    const payload = cleanResultPayload(result);
+    const { error } = await supabase.rpc('admin_save_result', { pin: adminPin, ...payload });
+    if (error) {
       setMessage(error.message);
+      return;
     }
+    setMessage('Résultat final enregistré.');
+    await loadData();
   }
 
   async function removeBet(id) {
     if (!window.confirm('Supprimer ce pari ?')) return;
-    try {
-      await adminRequest('delete_bet', adminPin, { id });
-      setMessage('Pari supprimé.');
-      await loadData();
-    } catch (error) {
+    const { error } = await supabase.rpc('admin_delete_bet', { pin: adminPin, p_id: id });
+    if (error) {
       setMessage(error.message);
+      return;
     }
+    setMessage('Pari supprimé.');
+    await loadData();
   }
 
   async function resetGame() {
     if (!window.confirm('Tout remettre à zéro ?')) return;
-    try {
-      await adminRequest('reset_game', adminPin);
-      setMessage('Jeu remis à zéro.');
-      await loadData();
-    } catch (error) {
+    const { error } = await supabase.rpc('admin_reset_game', { pin: adminPin });
+    if (error) {
       setMessage(error.message);
+      return;
     }
+    setMessage('Jeu remis à zéro.');
+    await loadData();
   }
 
   function exportData() {
