@@ -4,8 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 import { motion } from 'framer-motion';
 import './styles.css';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_URL = 'https://btxmplbdeovyxytxdkzx.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_3x3PgMOTCmGx8HySJ-zDmw_kfdbfFpg';
 
 const supabase = SUPABASE_URL && SUPABASE_ANON_KEY
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -132,7 +132,6 @@ function cleanBetPayload(bet) {
 
 function cleanResultPayload(result) {
   return {
-    pin: undefined,
     p_birth_date: result.birth_date || null,
     p_sex: result.sex || null,
     p_first_name: result.first_name?.trim() || null,
@@ -298,7 +297,7 @@ function App() {
           </div>
         </motion.header>
 
-        {!hasConfig && <div className="alert">Config Supabase manquante : ajoute VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans Vercel.</div>}
+        {!hasConfig && <div className="alert">Config Supabase manquante.</div>}
         {message && <div className="alert">{message}</div>}
 
         <div className="layout">
