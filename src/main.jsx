@@ -141,6 +141,19 @@ function cleanResultPayload(result) {
   };
 }
 
+function resultFacts(result) {
+  return [
+    { label: 'Date', value: formatDate(result.birth_date), icon: '📅' },
+    { label: 'Sexe', value: result.sex || '—', icon: '👶' },
+    { label: 'Poids', value: result.weight ? `${result.weight} g` : '—', icon: '⚖️' },
+    { label: 'Taille', value: result.height ? `${result.height} cm` : '—', icon: '📏' },
+  ];
+}
+
+function medal(index) {
+  return ['🥇', '🥈', '🥉'][index] || `${index + 1}`;
+}
+
 function Icon({ children }) {
   return <span aria-hidden="true" className="icon">{children}</span>;
 }
@@ -199,6 +212,10 @@ function App() {
       .map((item) => ({ ...item, scoring: scoreBet(item, result) }))
       .sort((a, b) => (b.scoring.total ?? -1) - (a.scoring.total ?? -1));
   }, [bets, result]);
+
+  const podium = leaderboard.slice(0, 3);
+  const restOfLeaderboard = leaderboard.slice(3);
+  const officialFacts = resultFacts(result);
 
   function updateBet(key, value) {
     setBet((current) => ({ ...current, [key]: value }));
@@ -374,11 +391,12 @@ function App() {
               </div>
             </section>
 
-            <section className="admin-card">
-              <div className="card-head responsive-head">
+            <section className="admin-card result-card">
+              <div className="card-head responsive-head result-head">
                 <div>
+                  <div className="mini-kicker">👑 Verdict officiel</div>
                   <h2>Résultat final</h2>
-                  <p>À remplir après la naissance. Là, les mythos tombent.</p>
+                  <p>On verrouille les vrais chiffres, puis le podium sort tout seul.</p>
                 </div>
                 {!adminMode && (
                   <form onSubmit={unlockAdmin} className="pin-form">
@@ -386,6 +404,24 @@ function App() {
                     <button type="submit">OK</button>
                   </form>
                 )}
+              </div>
+
+              <div className="result-official-card">
+                <div>
+                  <span className="result-label">Prénom officiel</span>
+                  <strong>{result.first_name || 'Mystère total'}</strong>
+                </div>
+                <div className="result-facts">
+                  {officialFacts.map((fact) => (
+                    <div className="fact-pill" key={fact.label}>
+                      <span>{fact.icon}</span>
+                      <div>
+                        <small>{fact.label}</small>
+                        <b>{fact.value}</b>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="result-grid">
@@ -409,19 +445,49 @@ function App() {
                 </div>
               )}
 
-              {result.show_result && (
-                <div className="leaderboard">
-                  {leaderboard.length === 0 && <p>Pas encore de participants.</p>}
-                  {leaderboard.map((item, index) => (
-                    <div key={item.id} className="rank-row">
-                      <div className="rank">{index + 1}</div>
-                      <div className="rank-main">
-                        <strong>{item.player}</strong>
-                        <span>{item.scoring.details.join(' · ') || 'Résultat incomplet'}</span>
-                      </div>
-                      <strong className="points">{item.scoring.total ?? '—'} pts</strong>
+              {result.show_result ? (
+                <div className="results-showcase">
+                  {leaderboard.length === 0 && <p className="muted-result">Pas encore de participants.</p>}
+
+                  {podium.length > 0 && (
+                    <div className="podium-grid">
+                      {podium.map((item, index) => (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, y: 12 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`podium-card podium-${index + 1}`}
+                        >
+                          <div className="medal">{medal(index)}</div>
+                          <div className="podium-name">{item.player}</div>
+                          <div className="podium-score">{item.scoring.total ?? '—'} pts</div>
+                          <div className="detail-pills">
+                            {item.scoring.details.slice(0, 3).map((detail) => <span key={detail}>{detail}</span>)}
+                          </div>
+                        </motion.div>
+                      ))}
                     </div>
-                  ))}
+                  )}
+
+                  {restOfLeaderboard.length > 0 && (
+                    <div className="leaderboard compact-leaderboard">
+                      {restOfLeaderboard.map((item, index) => (
+                        <div key={item.id} className="rank-row">
+                          <div className="rank">{index + 4}</div>
+                          <div className="rank-main">
+                            <strong>{item.player}</strong>
+                            <span>{item.scoring.details.join(' · ') || 'Résultat incomplet'}</span>
+                          </div>
+                          <strong className="points">{item.scoring.total ?? '—'} pts</strong>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="locked-result">
+                  <span>🔒</span>
+                  <p>Le classement reste caché tant que l’admin n’a pas publié le résultat.</p>
                 </div>
               )}
             </section>
