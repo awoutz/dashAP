@@ -150,6 +150,21 @@ function resultFacts(result) {
   ];
 }
 
+function betFacts(item) {
+  return [
+    { label: 'Date', value: formatDate(item.birth_date), icon: '📅' },
+    { label: 'Sexe', value: item.sex || '—', icon: '👶' },
+    { label: 'Prénom', value: item.first_name || 'Mystère', icon: '✨' },
+    { label: 'Poids', value: item.weight ? `${item.weight} g` : '—', icon: '⚖️' },
+    { label: 'Taille', value: item.height ? `${item.height} cm` : '—', icon: '📏' },
+  ];
+}
+
+function initials(name) {
+  const parts = String(name || '?').trim().split(/\s+/).filter(Boolean);
+  return parts.slice(0, 2).map((part) => part[0]?.toUpperCase()).join('') || '?';
+}
+
 function medal(index) {
   return ['🥇', '🥈', '🥉'][index] || `${index + 1}`;
 }
@@ -216,6 +231,7 @@ function App() {
   const podium = leaderboard.slice(0, 3);
   const restOfLeaderboard = leaderboard.slice(3);
   const officialFacts = resultFacts(result);
+  const latestBet = bets[0];
 
   function updateBet(key, value) {
     setBet((current) => ({ ...current, [key]: value }));
@@ -318,13 +334,14 @@ function App() {
         {message && <div className="alert">{message}</div>}
 
         <div className="layout">
-          <section className="card">
+          <section className="card form-card">
             <div className="card-head">
               <div>
+                <div className="mini-kicker light-kicker">🎲 Nouveau pari</div>
                 <h2>Je pose mon pari</h2>
                 <p>Simple, rapide, et probablement de mauvaise foi.</p>
               </div>
-              <span>✨</span>
+              <span className="big-corner-icon">✨</span>
             </div>
 
             <form onSubmit={submitBet} className="form">
@@ -367,26 +384,56 @@ function App() {
           </section>
 
           <div className="side">
-            <section className="card">
-              <div className="card-head responsive-head">
+            <section className="card bets-card">
+              <div className="bets-card-head">
                 <div>
-                  <h2><Icon>🏆</Icon> Paris enregistrés</h2>
-                  <p>{loading ? 'Chargement...' : `${bets.length} pari${bets.length > 1 ? 's' : ''} dans la cagnotte de gloire.`}</p>
+                  <div className="mini-kicker light-kicker">🎟️ Salle des pronostics</div>
+                  <h2>Le tableau des paris</h2>
+                  <p>{loading ? 'Chargement des tickets...' : `${bets.length} ticket${bets.length > 1 ? 's' : ''} validé${bets.length > 1 ? 's' : ''}.`}</p>
                 </div>
-                <button className="secondary" type="button" onClick={exportData}>⬇️ Export</button>
+                <button className="secondary export-btn" type="button" onClick={exportData}>⬇️ Export</button>
               </div>
 
-              <div className="bets-list">
+              <div className="bets-score-strip">
+                <div>
+                  <span>Participants</span>
+                  <strong>{bets.length}</strong>
+                </div>
+                <div>
+                  <span>Dernier pari</span>
+                  <strong>{latestBet ? latestBet.player : '—'}</strong>
+                </div>
+                <div>
+                  <span>Terme</span>
+                  <strong>25/06</strong>
+                </div>
+              </div>
+
+              <div className="bets-list ticket-list">
                 {!loading && bets.length === 0 && <div className="empty">Aucun pari pour l’instant. Le premier collègue aura l’air très confiant, donc forcément suspect.</div>}
-                {bets.map((item) => (
-                  <motion.div key={item.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="bet-row">
-                    <div>
-                      <strong>{item.player}</strong>
-                      <p>{formatDate(item.birth_date)} · {item.sex} · {item.first_name || 'Prénom mystère'} · {item.weight || '—'} g · {item.height || '—'} cm</p>
-                      {item.note && <em>“{item.note}”</em>}
+                {bets.map((item, index) => (
+                  <motion.article key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bet-ticket">
+                    <div className="ticket-main">
+                      <div className="ticket-avatar">{initials(item.player)}</div>
+                      <div className="ticket-title">
+                        <span>Ticket #{bets.length - index}</span>
+                        <strong>{item.player}</strong>
+                        <p>{item.note ? `“${item.note}”` : 'Aucun commentaire. Méfiance.'}</p>
+                      </div>
+                      {adminMode && <button className="ghost ticket-remove" type="button" onClick={() => removeBet(item.id)}>retirer</button>}
                     </div>
-                    {adminMode && <button className="ghost" type="button" onClick={() => removeBet(item.id)}>retirer</button>}
-                  </motion.div>
+                    <div className="ticket-grid">
+                      {betFacts(item).map((fact) => (
+                        <div className="ticket-chip" key={fact.label}>
+                          <span>{fact.icon}</span>
+                          <div>
+                            <small>{fact.label}</small>
+                            <b>{fact.value}</b>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.article>
                 ))}
               </div>
             </section>
