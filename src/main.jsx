@@ -6,7 +6,6 @@ import './styles.css';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const ADMIN_PIN = import.meta.env.VITE_ADMIN_PIN || '';
 
 const supabase = SUPABASE_URL && SUPABASE_ANON_KEY
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -101,6 +100,19 @@ function scoreBet(bet, result) {
   return { total, details };
 }
 
+function runSelfTests() {
+  const perfectBet = { birth_date: '2026-06-25', sex: 'Fille', first_name: 'Éléonore', weight: 3200, height: 50 };
+  const perfectResult = { birth_date: '2026-06-25', sex: 'Fille', first_name: 'Eleonore', weight: 3200, height: 50 };
+  console.assert(scoreBet(perfectBet, perfectResult).total === 100, 'Score parfait attendu : 100');
+  console.assert(scoreBet({ ...perfectBet, birth_date: '2026-06-27' }, { ...emptyResult, birth_date: '2026-06-25' }).total === 25, 'Date à 2 jours attendue : 25');
+  console.assert(scoreBet(perfectBet, emptyResult).total === null, 'Résultat vide attendu : null');
+}
+
+if (typeof window !== 'undefined' && !window.__BABY_BET_SELF_TESTS_DONE__) {
+  window.__BABY_BET_SELF_TESTS_DONE__ = true;
+  runSelfTests();
+}
+
 function formatDate(value) {
   if (!value) return '—';
   return new Date(`${value}T00:00:00`).toLocaleDateString('fr-FR');
@@ -129,11 +141,11 @@ function cleanResultPayload(result) {
   };
 }
 
-async function adminRequest(action, payload = {}) {
+async function adminRequest(action, pin, payload = {}) {
   const response = await fetch('/api/admin', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action, pin: ADMIN_PIN, ...payload }),
+    body: JSON.stringify({ action, pin, ...payload }),
   });
 
   const data = await response.json().catch(() => ({}));
@@ -162,6 +174,7 @@ function App() {
   const [message, setMessage] = React.useState('');
   const [adminMode, setAdminMode] = React.useState(false);
   const [adminPinInput, setAdminPinInput] = React.useState('');
+  const [adminPin, setAdminPin] = React.useState('');
 
   const hasConfig = Boolean(supabase);
 
@@ -191,16 +204,6 @@ function App() {
 
   React.useEffect(() => {
     loadData();
-  }, []);
-
-  React.useEffect(() => {
-    if (!supabase) return;
-    const channel = supabase
-      .channel('baby-bet-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bets' }, loadData)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'game_result' }, loadData)
-      .subscribe();
-    return () => supabase.removeChannel(channel);
   }, []);
 
   const leaderboard = React.useMemo(() => {
@@ -233,24 +236,22 @@ function App() {
     await loadData();
   }
 
-  function unlockAdmin(event) {
+  async function unlockAdmin(event) {
     event.preventDefault();
-    if (!ADMIN_PIN) {
-      setMessage('VITE_ADMIN_PIN n’est pas configuré côté Vercel.');
-      return;
-    }
-    if (adminPinInput === ADMIN_PIN) {
+    try {
+      await adminRequest('check_pin', adminPinInput);
       setAdminMode(true);
+      setAdminPin(adminPinInput);
       setAdminPinInput('');
       setMessage('Mode admin activé.');
-    } else {
-      setMessage('PIN incorrect.');
+    } catch (error) {
+      setMessage(error.message);
     }
   }
 
   async function saveResult() {
     try {
-      await adminRequest('save_result', { result: cleanResultPayload(result) });
+      await adminRequest('save_result', adminPin, { result: cleanResultPayload(result) });
       setMessage('Résultat final enregistré.');
       await loadData();
     } catch (error) {
@@ -261,7 +262,7 @@ function App() {
   async function removeBet(id) {
     if (!window.confirm('Supprimer ce pari ?')) return;
     try {
-      await adminRequest('delete_bet', { id });
+      await adminRequest('delete_bet', adminPin, { id });
       setMessage('Pari supprimé.');
       await loadData();
     } catch (error) {
@@ -272,7 +273,7 @@ function App() {
   async function resetGame() {
     if (!window.confirm('Tout remettre à zéro ?')) return;
     try {
-      await adminRequest('reset_game');
+      await adminRequest('reset_game', adminPin);
       setMessage('Jeu remis à zéro.');
       await loadData();
     } catch (error) {
@@ -306,9 +307,7 @@ function App() {
           </div>
         </motion.header>
 
-        {!hasConfig && (
-          <div className="alert">Config Supabase manquante : ajoute VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans Vercel.</div>
-        )}
+        {!hasConfig && <div className="alert">Config Supabase manquante : ajoute VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans Vercel.</div>}
         {message && <div className="alert">{message}</div>}
 
         <div className="layout">
@@ -393,7 +392,7 @@ function App() {
                 </div>
                 {!adminMode && (
                   <form onSubmit={unlockAdmin} className="pin-form">
-                    <input value={adminPinInput} onChange={(event) => setAdminPinInput(event.target.value)} placeholder="PIN admin" />
+                    <input value={adminPinInput} onChange={(event) => setAdminPinInput(event.target.value)} placeholder="PIN admin" type="password" />
                     <button type="submit">OK</button>
                   </form>
                 )}
