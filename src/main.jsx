@@ -6,6 +6,7 @@ import './styles.css';
 
 const SUPABASE_URL = 'https://btxmplbdeovyxytxdkzx.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_3x3PgMOTCmGx8HySJ-zDmw_kfdbfFpg';
+const CAGNOTTE_URL = 'https://www.lepotcommun.fr/cagnotte/festive/naissance-marine-gv3n7vse';
 
 const supabase = SUPABASE_URL && SUPABASE_ANON_KEY
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -182,6 +183,19 @@ function Field({ label, icon, children }) {
   );
 }
 
+const donationButtonStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '8px',
+  textAlign: 'center',
+  textDecoration: 'none',
+  background: 'linear-gradient(135deg,#fb7185,#f43f5e)',
+  color: '#fff',
+  border: '0',
+  boxShadow: '0 18px 35px rgba(244,63,94,.22)',
+};
+
 function App() {
   const [bet, setBet] = React.useState(defaultBet);
   const [bets, setBets] = React.useState([]);
@@ -324,9 +338,14 @@ function App() {
             <h1>Les paris du bébé de Marine</h1>
             <p>Date, sexe, prénom, poids, taille : chacun tente sa chance. Le jour J, on renseigne le résultat et le classement se calcule tout seul.</p>
           </div>
-          <div className="term-card">
-            <span>Terme estimé</span>
-            <strong><Icon>📅</Icon> 25 juin 2026</strong>
+          <div style={{ display: 'grid', gap: '12px', minWidth: '260px' }}>
+            <div className="term-card">
+              <span>Terme estimé</span>
+              <strong><Icon>📅</Icon> 25 juin 2026</strong>
+            </div>
+            <a href={CAGNOTTE_URL} target="_blank" rel="noreferrer" className="primary" style={donationButtonStyle}>
+              🎁 Participer à la cagnotte
+            </a>
           </div>
         </motion.header>
 
@@ -380,6 +399,9 @@ function App() {
               </Field>
 
               <button className="primary" type="submit" disabled={!hasConfig}>Valider mon pari</button>
+              <a href={CAGNOTTE_URL} target="_blank" rel="noreferrer" className="secondary" style={{ ...donationButtonStyle, padding: '13px 15px', borderRadius: '18px' }}>
+                🎁 Participer à la cagnotte de naissance
+              </a>
             </form>
           </section>
 
