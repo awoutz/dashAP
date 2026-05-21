@@ -42,9 +42,7 @@ function dayDiffFromTerm(value) {
 
 function daysBetween(a, b) {
   if (!a || !b) return 9999;
-  const da = new Date(`${a}T00:00:00`);
-  const db = new Date(`${b}T00:00:00`);
-  return Math.abs(Math.round((da - db) / 86400000));
+  return Math.abs(Math.round((new Date(`${a}T00:00:00`) - new Date(`${b}T00:00:00`)) / 86400000));
 }
 
 function normalizeName(value) {
@@ -57,30 +55,25 @@ function scoreBet(bet, result) {
   const details = [];
   if (result.birth_date) {
     const points = Math.max(0, 35 - daysBetween(bet.birth_date, result.birth_date) * 5);
-    total += points;
-    details.push(`Date ${points}`);
+    total += points; details.push(`Date ${points}`);
   }
   if (result.sex) {
     const points = bet.sex === result.sex ? 20 : 0;
-    total += points;
-    details.push(`Sexe ${points}`);
+    total += points; details.push(`Sexe ${points}`);
   }
   if (result.first_name) {
     const points = normalizeName(bet.first_name) === normalizeName(result.first_name) ? 25 : 0;
-    total += points;
-    details.push(`Prénom ${points}`);
+    total += points; details.push(`Prénom ${points}`);
   }
   const bw = toNumberOrNull(bet.weight), rw = toNumberOrNull(result.weight);
   if (bw !== null && rw !== null) {
     const points = Math.max(0, 15 - Math.floor(Math.abs(bw - rw) / 100));
-    total += points;
-    details.push(`Poids ${points}`);
+    total += points; details.push(`Poids ${points}`);
   }
   const bh = toNumberOrNull(bet.height), rh = toNumberOrNull(result.height);
   if (bh !== null && rh !== null) {
     const points = Math.max(0, 5 - Math.abs(bh - rh));
-    total += points;
-    details.push(`Taille ${points}`);
+    total += points; details.push(`Taille ${points}`);
   }
   return { total, details };
 }
@@ -111,10 +104,14 @@ function mean(values) {
   return Math.round(nums.reduce((a, b) => a + b, 0) / nums.length);
 }
 
+function countBy(values) {
+  const map = new Map();
+  values.filter(Boolean).forEach((v) => map.set(v, (map.get(v) || 0) + 1));
+  return [...map.entries()].map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count || String(a.label).localeCompare(String(b.label)));
+}
+
 function mode(values) {
-  const counts = new Map();
-  values.filter(Boolean).forEach((v) => counts.set(v, (counts.get(v) || 0) + 1));
-  return [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || '—';
+  return countBy(values)[0]?.label || '—';
 }
 
 function dateRange(center, spread = 6) {
@@ -134,6 +131,16 @@ function badgeFor(bet) {
   if (w && w >= 4000) return 'Poids lourd';
   if (!bet.note) return 'Silent oracle';
   return 'Oracle du bureau';
+}
+
+function weightBucket(weight) {
+  const w = toNumberOrNull(weight);
+  if (w === null) return null;
+  if (w < 2800) return '< 2,8 kg';
+  if (w < 3200) return '2,8–3,2 kg';
+  if (w < 3600) return '3,2–3,6 kg';
+  if (w < 4000) return '3,6–4 kg';
+  return '4 kg+';
 }
 
 function App() {
@@ -176,7 +183,8 @@ function App() {
     return { sex, avgWeight, avgHeight, commonDate, topName: mode(names), participants: bets.length, early, exactTerm, late };
   }, [bets]);
 
-  const timeline = dateRange(TERM_DATE, 6).map((date) => ({ date, items: bets.filter((b) => b.birth_date === date) }));
+  const timeline = React.useMemo(() => dateRange(TERM_DATE, 6).map((date) => ({ date, items: bets.filter((b) => b.birth_date === date) })), [bets]);
+  const dataLab = React.useMemo(() => buildDataLab(bets, timeline), [bets, timeline]);
   const confidence = Math.min(96, 28 + bets.length * 8);
   const messages = bets.filter((b) => b.note).slice(0, 8);
   const sortedByDate = [...bets].sort((a, b) => a.birth_date.localeCompare(b.birth_date));
@@ -259,8 +267,8 @@ function App() {
         <div className="panel-title"><span>📌</span><div><h2>Mode d’emploi</h2><p>Trois gestes, zéro prise de tête.</p></div></div>
         <div className="info-cards">
           <InfoCard icon="🎲" title="1. Je pose mon pari" text="Date, sexe, prénom, poids, taille. Le ticket est public dans le wall." />
-          <InfoCard icon="💌" title="2. Je laisse un mot" text="Le commentaire sert aussi de message sympa pour Marine." />
-          <InfoCard icon="🎁" title="3. Je participe au cadeau" text="La cagnotte reste externe et sécurisée côté Le Pot Commun." />
+          <InfoCard icon="💌" title="2. Je laisse un mot" text="Le commentaire reste attaché au ticket. Il n’est pas séparé ni copié ailleurs." />
+          <InfoCard icon="🎁" title="3. Je participe au cadeau" text="La cagnotte reste externe côté Le Pot Commun. L’app ne manipule pas de paiement." />
         </div>
       </section>
 
@@ -281,7 +289,7 @@ function App() {
       </section>
 
       <section className="side-quests-panel">
-        <div className="panel-title"><span>🏅</span><div><h2>Sous-paris automatiques</h2><p>Des mini-titres qui ajoutent du jeu sans nouveau formulaire.</p></div></div>
+        <div className="panel-title"><span>🏅</span><div><h2>Sous-paris automatiques</h2><p>Des mini-titres calculés depuis les tickets, sans nouveau champ en base.</p></div></div>
         <div className="quest-grid">
           <Quest title="Team impatience" value={`${stats.early} avant terme`} detail={earliest ? `${earliest.player} ouvre le bal au ${formatDate(earliest.birth_date, true)}` : 'Aucun ticket'} />
           <Quest title="Team chill" value={`${stats.late} après terme`} detail={latest ? `${latest.player} voit large au ${formatDate(latest.birth_date, true)}` : 'Aucun ticket'} />
@@ -296,8 +304,20 @@ function App() {
       </section>
 
       <section className="message-wall-panel">
-        <div className="panel-title"><span>💌</span><div><h2>Mur des messages</h2><p>Les mots sympas remontent ici automatiquement.</p></div></div>
+        <div className="panel-title"><span>💌</span><div><h2>Mur des messages</h2><p>Les mots sympas remontent ici automatiquement, mais restent attachés à leur ticket.</p></div></div>
         <div className="message-wall">{messages.length ? messages.map((m) => <article key={m.id} className="message-card"><b>{m.player}</b><p>“{m.note}”</p></article>) : <div className="empty-state">Aucun message pour l’instant. Le prochain ticket peut sauver l’ambiance.</div>}</div>
+      </section>
+
+      <DataLab bets={bets} data={dataLab} stats={stats} timeline={timeline} />
+
+      <section className="automation-panel">
+        <div className="panel-title"><span>⚙️</span><div><h2>Ce qui est automatique</h2><p>Pas de magie noire : tout est recalculé depuis les tickets Supabase.</p></div></div>
+        <div className="automation-grid">
+          <AutoRule title="Consensus" text="Sexe majoritaire, date favorite, poids et taille moyens sont recalculés à chaque chargement." />
+          <AutoRule title="Sous-paris" text="Team impatience, bébé chill, poids lourd et plume du bureau sont des lectures dérivées des mêmes tickets." />
+          <AutoRule title="Messages" text="Le message personnalisé reste dans la colonne note du pari. Le mur des messages ne fait que l’afficher autrement." />
+          <AutoRule title="Data Lab" text="Les graphiques du bas sont des vues analytiques temporaires : aucune donnée supplémentaire n’est créée." />
+        </div>
       </section>
 
       <section className="admin-panel">
@@ -323,6 +343,98 @@ function App() {
   </div>;
 }
 
+function buildDataLab(bets, timeline) {
+  const sexCounts = countBy(bets.map((b) => b.sex));
+  const nameCounts = countBy(bets.map((b) => b.first_name).filter(Boolean)).slice(0, 8);
+  const weightCounts = countBy(bets.map((b) => weightBucket(b.weight)).filter(Boolean));
+  const total = Math.max(1, bets.length);
+  const maxDate = Math.max(1, ...timeline.map((d) => d.items.length));
+  const maxWeight = Math.max(1, ...weightCounts.map((d) => d.count));
+  const maxName = Math.max(1, ...nameCounts.map((d) => d.count));
+  const scatter = bets
+    .map((b) => ({ id: b.id, player: b.player, weight: toNumberOrNull(b.weight), height: toNumberOrNull(b.height), note: b.note }))
+    .filter((p) => p.weight !== null && p.height !== null);
+  return { sexCounts, nameCounts, weightCounts, total, maxDate, maxWeight, maxName, scatter };
+}
+
+function DataLab({ bets, data, stats, timeline }) {
+  const girl = data.sexCounts.find((x) => x.label === 'Fille')?.count || 0;
+  const boy = data.sexCounts.find((x) => x.label === 'Garçon')?.count || 0;
+  const other = Math.max(0, data.total - girl - boy);
+  const girlPct = Math.round((girl / data.total) * 100);
+  const boyPct = Math.round((boy / data.total) * 100);
+  const otherPct = 100 - girlPct - boyPct;
+
+  return <section className="data-lab-panel">
+    <div className="panel-title data-lab-title"><span>📊</span><div><h2>Data Analyst Lab</h2><p>Chaque partie du pari a sa lecture data. C’est inutilement sérieux, donc indispensable.</p></div></div>
+    <div className="data-lab-grid">
+      <ChartCard title="Répartition sexe" subtitle="Donut custom, sans lib externe.">
+        <div className="donut-wrap">
+          <div className="donut" style={{ background: `conic-gradient(#fb7185 0 ${girlPct}%, #60a5fa ${girlPct}% ${girlPct + boyPct}%, #facc15 ${girlPct + boyPct}% 100%)` }}><b>{stats.sex}</b><span>majoritaire</span></div>
+          <div className="legend"><Legend color="pink" label="Fille" value={`${girl} · ${girlPct}%`} /><Legend color="blue" label="Garçon" value={`${boy} · ${boyPct}%`} /><Legend color="gold" label="Surprise" value={`${other} · ${otherPct}%`} /></div>
+        </div>
+      </ChartCard>
+
+      <ChartCard title="Distribution des dates" subtitle="Lecture calendrier autour du terme.">
+        <div className="date-bars">{timeline.map((d) => <div key={d.date} className={d.date === TERM_DATE ? 'date-bar term' : 'date-bar'}><div className="bar-track"><span style={{ height: `${12 + (d.items.length / data.maxDate) * 88}%` }} /></div><b>{formatDate(d.date, true)}</b><small>{d.items.length}</small></div>)}</div>
+      </ChartCard>
+
+      <ChartCard title="Histogramme poids" subtitle="Les paris regroupés par tranche.">
+        <div className="histo">{data.weightCounts.length ? data.weightCounts.map((b) => <div key={b.label} className="histo-row"><span>{b.label}</span><div><i style={{ width: `${(b.count / data.maxWeight) * 100}%` }} /></div><b>{b.count}</b></div>) : <EmptyMini />}</div>
+      </ChartCard>
+
+      <ChartCard title="Nuage des prénoms" subtitle="Pas une IA : juste les prénoms les plus tentés.">
+        <div className="name-cloud">{data.nameCounts.length ? data.nameCounts.map((n, index) => <span key={n.label} style={{ '--rank': index, '--power': `${0.72 + (n.count / data.maxName) * 0.56}` }}>{n.label}<b>{n.count}</b></span>) : <EmptyMini />}</div>
+      </ChartCard>
+
+      <ChartCard title="Carte poids × taille" subtitle="Un scatterplot pour faire croire qu’on est en comité stratégique.">
+        <Scatter points={data.scatter} />
+      </ChartCard>
+
+      <ChartCard title="Messages & engagement" subtitle="Les mots restent attachés aux tickets, ici on mesure juste l’activité.">
+        <Engagement bets={bets} />
+      </ChartCard>
+    </div>
+  </section>;
+}
+
+function Scatter({ points }) {
+  const weights = points.map((p) => p.weight);
+  const heights = points.map((p) => p.height);
+  const minW = Math.min(2600, ...weights), maxW = Math.max(4300, ...weights);
+  const minH = Math.min(45, ...heights), maxH = Math.max(55, ...heights);
+  if (!points.length) return <EmptyMini />;
+  return <svg className="scatter" viewBox="0 0 360 220" role="img" aria-label="Carte poids taille des paris">
+    <line x1="34" y1="184" x2="336" y2="184" />
+    <line x1="34" y1="20" x2="34" y2="184" />
+    {[0, 1, 2, 3].map((i) => <line key={i} className="gridline" x1="34" x2="336" y1={42 + i * 42} y2={42 + i * 42} />)}
+    {points.map((p, index) => {
+      const x = 42 + ((p.weight - minW) / Math.max(1, maxW - minW)) * 286;
+      const y = 176 - ((p.height - minH) / Math.max(1, maxH - minH)) * 142;
+      return <g key={p.id}><circle cx={x} cy={y} r={p.note ? 8 : 6} className={index % 2 ? 'point alt' : 'point'}><title>{p.player} · {p.weight}g · {p.height}cm</title></circle><text x={x + 9} y={y + 4}>{initials(p.player)}</text></g>;
+    })}
+    <text className="axis-label" x="250" y="208">poids</text>
+    <text className="axis-label" x="4" y="24">taille</text>
+  </svg>;
+}
+
+function Engagement({ bets }) {
+  const total = Math.max(1, bets.length);
+  const withMessage = bets.filter((b) => b.note).length;
+  const avgLength = Math.round(mean(bets.filter((b) => b.note).map((b) => b.note.length)) || 0);
+  const withName = bets.filter((b) => b.first_name).length;
+  return <div className="engagement-stack">
+    <Progress label="Tickets avec message" value={withMessage} total={total} />
+    <Progress label="Tickets avec prénom" value={withName} total={total} />
+    <div className="engagement-kpi"><span>Longueur moyenne des messages</span><b>{avgLength} caractères</b></div>
+  </div>;
+}
+
+function Progress({ label, value, total }) {
+  const pct = Math.round((value / Math.max(1, total)) * 100);
+  return <div className="progress-line"><div><span>{label}</span><b>{value}/{total}</b></div><i><em style={{ width: `${pct}%` }} /></i></div>;
+}
+
 function ParticipationModal({ bet, setField, current, wizard, wizardStep, setWizardStep, submitBet, onClose }) {
   return <motion.div className="participation-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
     <motion.div className="participation-modal" initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}>
@@ -331,11 +443,7 @@ function ParticipationModal({ bet, setField, current, wizard, wizardStep, setWiz
         <div className="brand-pill">🚀 Participation cockpit</div>
         <h2>Un seul écran pour tout faire.</h2>
         <p>Tu poses ton pari, tu laisses un message sympa, puis tu peux participer au cadeau sans chercher où cliquer.</p>
-        <div className="gift-card">
-          <span>🎁 Cagnotte officielle</span>
-          <b>Le pari est gratuit, le cadeau est optionnel.</b>
-          <a href={CAGNOTTE_URL} target="_blank" rel="noreferrer" className="cta-primary">Ouvrir Le Pot Commun</a>
-        </div>
+        <div className="gift-card"><span>🎁 Cagnotte officielle</span><b>Le pari est gratuit, le cadeau est optionnel.</b><a href={CAGNOTTE_URL} target="_blank" rel="noreferrer" className="cta-primary">Ouvrir Le Pot Commun</a></div>
       </aside>
       <section className="participation-form">
         <div className="panel-title"><span>🎲</span><div><h2>{current.title}</h2><p>{current.sub}</p></div></div>
@@ -351,10 +459,7 @@ function ParticipationModal({ bet, setField, current, wizard, wizardStep, setWiz
               {current.fields.includes('note') && <Field label="Message sympa"><textarea value={bet.note} onChange={(e) => setField('note', e.target.value)} placeholder="Petit mot pour Marine, ou punchline de pronostic." /></Field>}
             </motion.div>
           </AnimatePresence>
-          <div className="wizard-actions">
-            <button type="button" className="cta-secondary" disabled={wizardStep === 0} onClick={() => setWizardStep((s) => Math.max(0, s - 1))}>Retour</button>
-            {wizardStep < wizard.length - 1 ? <button type="button" className="cta-primary" onClick={() => setWizardStep((s) => s + 1)}>Suite</button> : <button className="cta-primary">Valider mon ticket</button>}
-          </div>
+          <div className="wizard-actions"><button type="button" className="cta-secondary" disabled={wizardStep === 0} onClick={() => setWizardStep((s) => Math.max(0, s - 1))}>Retour</button>{wizardStep < wizard.length - 1 ? <button type="button" className="cta-primary" onClick={() => setWizardStep((s) => s + 1)}>Suite</button> : <button className="cta-primary">Valider mon ticket</button>}</div>
         </form>
       </section>
     </motion.div>
@@ -365,5 +470,9 @@ function Field({ label, children }) { return <label className="field"><span>{lab
 function Metric({ label, value }) { return <div className="metric"><span>{label}</span><strong>{value}</strong></div>; }
 function InfoCard({ icon, title, text }) { return <article className="info-card"><span>{icon}</span><b>{title}</b><p>{text}</p></article>; }
 function Quest({ title, value, detail }) { return <article className="quest-card"><span>{title}</span><b>{value}</b><p>{detail}</p></article>; }
+function ChartCard({ title, subtitle, children }) { return <article className="chart-card"><div className="chart-head"><b>{title}</b><span>{subtitle}</span></div>{children}</article>; }
+function Legend({ color, label, value }) { return <div className={`legend-row ${color}`}><i /><span>{label}</span><b>{value}</b></div>; }
+function AutoRule({ title, text }) { return <article className="auto-rule"><b>{title}</b><p>{text}</p></article>; }
+function EmptyMini() { return <div className="empty-mini">Pas assez de données pour tracer ce graphique.</div>; }
 
 createRoot(document.getElementById('root')).render(<App />);
