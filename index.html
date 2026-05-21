@@ -9,111 +9,112 @@
       .confidence-mini { display: none !important; }
 
       @media (min-width: 1051px) {
-        .app-shell { padding: 14px 22px !important; }
+        .app-shell { padding: 12px 20px !important; }
         .app-grid {
-          max-width: 1480px !important;
+          max-width: 1500px !important;
           grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+          grid-template-areas:
+            "hero hero"
+            "consensus consensus"
+            "info participation"
+            "badges messages"
+            "tickets tickets"
+            "admin admin" !important;
           gap: 14px !important;
+          align-items: start !important;
         }
 
-        .hero-panel {
-          min-height: 255px !important;
-          padding: 22px !important;
-        }
+        .hero-panel { grid-area: hero !important; min-height: 230px !important; padding: 20px !important; }
+        .consensus-strip { grid-area: consensus !important; }
+        .info-panel { grid-area: info !important; }
+        .participation-zone { grid-area: participation !important; }
+        .side-quests-panel { grid-area: badges !important; }
+        .message-wall-panel { grid-area: messages !important; }
+        .tickets-panel { grid-area: tickets !important; }
+        .admin-panel { grid-area: admin !important; }
+
+        .hero-panel:after { font-size: 92px !important; }
         .hero-panel h1 {
           max-width: 1050px !important;
-          font-size: clamp(44px, 6vw, 82px) !important;
+          font-size: clamp(42px, 5.6vw, 76px) !important;
         }
-        .hero-copy { margin-top: 12px !important; font-size: 17px !important; }
-        .hero-actions { margin-top: 16px !important; }
+        .hero-copy { margin-top: 10px !important; font-size: 16px !important; max-width: 760px !important; }
+        .hero-actions { margin-top: 14px !important; }
+        .cta-primary.huge { font-size: 16px !important; padding: 13px 16px !important; }
 
         .consensus-strip {
-          grid-template-columns: 1.2fr repeat(5, minmax(0, 1fr)) !important;
+          grid-template-columns: 1.25fr repeat(5, minmax(0, 1fr)) !important;
           gap: 8px !important;
           padding: 12px !important;
         }
-        .consensus-strip .metric { padding: 8px 10px !important; }
+        .consensus-strip .metric { padding: 8px 10px !important; min-height: 58px !important; }
         .consensus-strip .metric strong { font-size: 16px !important; }
         .metric small { display:block; margin-top:3px; color:#94a3b8; font-size:11px; line-height:1.15; }
 
         .info-panel, .participation-zone, .side-quests-panel, .message-wall-panel, .tickets-panel, .admin-panel {
-          padding: 18px !important;
-          border-radius: 28px !important;
+          padding: 16px !important;
+          border-radius: 26px !important;
         }
 
-        .info-cards { grid-template-columns: repeat(3, 1fr) !important; }
-        .info-card { padding: 14px !important; border-radius: 22px !important; }
-        .info-card > span { font-size: 24px !important; }
-        .info-card b { margin-top: 6px !important; font-size: 16px !important; }
-        .info-card p { font-size: 13px !important; line-height: 1.32 !important; }
+        .panel-title { margin-bottom: 10px !important; }
+        .panel-title > span { width: 36px !important; height: 36px !important; border-radius: 14px !important; }
+        .panel-title h2 { font-size: 21px !important; }
+        .panel-title p { font-size: 13px !important; margin-top: 3px !important; }
+
+        .info-cards { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
+        .info-card { padding: 12px !important; border-radius: 20px !important; }
+        .info-card > span { font-size: 22px !important; }
+        .info-card b { margin-top: 5px !important; font-size: 15px !important; }
+        .info-card p { font-size: 12px !important; line-height: 1.28 !important; }
 
         .participation-zone {
-          min-height: auto !important;
-          grid-template-columns: 1.2fr .8fr !important;
+          min-height: 100% !important;
+          grid-template-columns: 1.1fr .9fr !important;
+          gap: 12px !important;
         }
-        .participation-launch { min-height: 86px !important; border-radius: 24px !important; }
-        .participation-launch b { font-size: 22px !important; }
-
-        .side-quests-panel {
-          grid-column: 1 !important;
-          grid-row: 5 !important;
-        }
-        .message-wall-panel {
-          grid-column: 2 !important;
-          grid-row: 5 !important;
-        }
-        .tickets-panel {
-          grid-column: 1 / -1 !important;
-          grid-row: 6 !important;
-        }
-        .admin-panel {
-          grid-column: 1 / -1 !important;
-          grid-row: 7 !important;
-        }
-
-        .panel-title { margin-bottom: 12px !important; }
-        .panel-title > span { width: 38px !important; height: 38px !important; border-radius: 15px !important; }
-        .panel-title h2 { font-size: 22px !important; }
-        .panel-title p { font-size: 13px !important; }
+        .participation-copy p { font-size: 13px !important; line-height: 1.35 !important; }
+        .participation-launch { min-height: 82px !important; border-radius: 22px !important; padding: 16px !important; }
+        .participation-launch b { font-size: 21px !important; }
 
         .quest-grid {
-          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-          gap: 10px !important;
+          grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+          gap: 9px !important;
         }
         .quest-card {
-          min-height: 104px !important;
-          padding: 12px 14px !important;
-          border-radius: 20px !important;
-        }
-        .quest-card span { font-size: 11px !important; }
-        .quest-card b { font-size: 18px !important; }
-        .quest-card p { font-size: 13px !important; line-height: 1.3 !important; }
-
-        .message-wall {
-          max-height: 310px !important;
-          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-          gap: 10px !important;
-        }
-        .message-card {
-          padding: 12px !important;
+          min-height: 92px !important;
+          padding: 11px 12px !important;
           border-radius: 18px !important;
         }
-        .message-card p { font-size: 13px !important; line-height: 1.32 !important; }
+        .quest-card span { font-size: 10px !important; letter-spacing: .07em !important; }
+        .quest-card b { margin-top: 4px !important; font-size: 17px !important; line-height: 1.02 !important; }
+        .quest-card p { margin-top: 6px !important; font-size: 12px !important; line-height: 1.28 !important; }
+
+        .message-wall {
+          max-height: 296px !important;
+          display: grid !important;
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          gap: 9px !important;
+          overflow: auto !important;
+        }
+        .message-card {
+          padding: 11px !important;
+          border-radius: 18px !important;
+        }
+        .message-card p { font-size: 12px !important; line-height: 1.28 !important; }
 
         .tickets-wall {
           grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
           gap: 10px !important;
         }
-        .ticket {
-          padding: 12px !important;
-          border-radius: 20px !important;
-        }
+        .ticket { padding: 12px !important; border-radius: 20px !important; }
         .ticket-top span { width: 34px !important; height: 34px !important; border-radius: 12px !important; }
         .ticket-top b { font-size: 16px !important; }
         .ticket-prediction { margin-top: 8px !important; font-size: 14px !important; }
         .ticket-meta { margin-top: 8px !important; gap: 5px !important; }
         .ticket-meta span { padding: 5px 7px !important; font-size: 11px !important; }
         .ticket-badges { padding-top: 8px !important; }
+
+        .admin-panel { padding-bottom: 18px !important; }
       }
 
       @media (max-width: 1050px) {
