@@ -182,19 +182,38 @@ function badgesFor(bet) {
   const badges = [];
   const diff = dayDiffFromTerm(bet.birth_date);
   const weight = toWeightGrams(bet.weight);
+  const height = parseNumber(bet.height);
+  const firstNameLength = String(bet.first_name || '').trim().length;
+  const noteLength = String(bet.note || '').trim().length;
 
-  if (diff < -2) badges.push({ icon: '⚡', label: 'Team impatience' });
+  if (diff < -4) badges.push({ icon: '🚀', label: 'Départ express' });
+  else if (diff < -2) badges.push({ icon: '⚡', label: 'Team impatience' });
+  else if (diff > 4) badges.push({ icon: '🧘', label: 'Zen absolu' });
   else if (diff > 2) badges.push({ icon: '🛋️', label: 'Bébé chill' });
   else if (diff === 0) badges.push({ icon: '🎯', label: 'Pile au terme' });
   else badges.push({ icon: '📅', label: 'Timing prudent' });
 
+  if (bet.sex === 'Fille') badges.push({ icon: '🎀', label: 'Team fille' });
+  if (bet.sex === 'Garçon') badges.push({ icon: '🧢', label: 'Team garçon' });
+  if (bet.sex === 'Surprise totale') badges.push({ icon: '🎁', label: 'Team surprise' });
+
   if (weight && weight >= 4000) badges.push({ icon: '🏋️', label: 'Poids lourd' });
   else if (weight && weight < 2800) badges.push({ icon: '🪶', label: 'Format mini' });
+  else if (weight && weight >= 3100 && weight <= 3500) badges.push({ icon: '✅', label: 'Safe baby' });
   else badges.push({ icon: '⚖️', label: 'Poids classique' });
 
-  if (bet.first_name) badges.push({ icon: '✨', label: 'Prénom tenté' });
+  if (height && height >= 53) badges.push({ icon: '📏', label: 'Grand modèle' });
+  else if (height && height <= 48) badges.push({ icon: '🧸', label: 'Mini format' });
+
+  if (firstNameLength >= 9) badges.push({ icon: '🎭', label: 'Prénom de compèt' });
+  else if (bet.first_name) badges.push({ icon: '✨', label: 'Prénom tenté' });
+  else badges.push({ icon: '❔', label: 'Prénom mystère' });
+
+  if (noteLength >= 90) badges.push({ icon: '📚', label: 'Roman familial' });
+  else if (noteLength >= 35) badges.push({ icon: '📝', label: 'Mot travaillé' });
   badges.push(bet.note ? { icon: '💌', label: 'Message laissé' } : { icon: '🤫', label: 'Mystérieux' });
-  return badges;
+
+  return badges.slice(0, 9);
 }
 
 function App() {
@@ -248,9 +267,18 @@ function App() {
   const earliest = sortedByDate[0];
   const latest = sortedByDate[sortedByDate.length - 1];
   const heaviest = [...bets].sort((a, b) => (toWeightGrams(b.weight) || 0) - (toWeightGrams(a.weight) || 0))[0];
+  const lightest = [...bets].filter((item) => toWeightGrams(item.weight)).sort((a, b) => (toWeightGrams(a.weight) || 99999) - (toWeightGrams(b.weight) || 99999))[0];
+  const tallest = [...bets].filter((item) => parseNumber(item.height)).sort((a, b) => (parseNumber(b.height) || 0) - (parseNumber(a.height) || 0))[0];
   const mostInspired = [...bets].filter((item) => item.note).sort((a, b) => b.note.length - a.note.length)[0];
+  const longestName = [...bets].filter((item) => item.first_name).sort((a, b) => b.first_name.length - a.first_name.length)[0];
   const earlyCount = bets.filter((item) => dayDiffFromTerm(item.birth_date) < 0).length;
   const lateCount = bets.filter((item) => dayDiffFromTerm(item.birth_date) > 0).length;
+  const exactTermCount = bets.filter((item) => dayDiffFromTerm(item.birth_date) === 0).length;
+  const teamFilleCount = bets.filter((item) => item.sex === 'Fille').length;
+  const teamGarconCount = bets.filter((item) => item.sex === 'Garçon').length;
+  const teamSurpriseCount = bets.filter((item) => item.sex === 'Surprise totale').length;
+  const namedCount = bets.filter((item) => item.first_name).length;
+  const messageCount = bets.filter((item) => item.note).length;
 
   function updateBet(key, value) {
     setBet((current) => ({ ...current, [key]: value }));
@@ -387,7 +415,15 @@ function App() {
         <div className="quest-grid">
           <Quest title="Team impatience" value={`${earlyCount} avant terme`} detail={earliest ? `${earliest.player} ouvre le bal au ${formatDate(earliest.birth_date, true)}` : 'Aucun ticket'} />
           <Quest title="Team chill" value={`${lateCount} après terme`} detail={latest ? `${latest.player} voit large au ${formatDate(latest.birth_date, true)}` : 'Aucun ticket'} />
+          <Quest title="Pile au terme" value={`${exactTermCount} pile le 25/06`} detail={exactTermCount ? 'Les puristes du calendrier.' : 'Personne ne tente le jour exact.'} />
+          <Quest title="Team fille" value={`${teamFilleCount} ticket${teamFilleCount > 1 ? 's' : ''}`} detail={teamFilleCount ? 'Le camp fille est posé.' : 'Aucun vote fille.'} />
+          <Quest title="Team garçon" value={`${teamGarconCount} ticket${teamGarconCount > 1 ? 's' : ''}`} detail={teamGarconCount ? 'Le camp garçon répond présent.' : 'Aucun vote garçon.'} />
+          <Quest title="Team surprise" value={`${teamSurpriseCount} ticket${teamSurpriseCount > 1 ? 's' : ''}`} detail={teamSurpriseCount ? 'Ils refusent de choisir.' : 'Pas de joker pour l’instant.'} />
           <Quest title="Poids lourd" value={heaviest ? formatWeight(heaviest.weight) : '—'} detail={heaviest ? `${heaviest.player} a tenté le plus gros bébé` : 'Aucun ticket'} />
+          <Quest title="Format mini" value={lightest ? formatWeight(lightest.weight) : '—'} detail={lightest ? `${lightest.player} joue la version compacte` : 'Aucun ticket'} />
+          <Quest title="Grand modèle" value={tallest ? `${tallest.height} cm` : '—'} detail={tallest ? `${tallest.player} a misé sur la taille` : 'Aucun ticket'} />
+          <Quest title="Prénoms tentés" value={`${namedCount}/${bets.length || 0}`} detail={longestName ? `${longestName.player} sort “${longestName.first_name}”` : 'Encore beaucoup de mystère.'} />
+          <Quest title="Messages laissés" value={`${messageCount}/${bets.length || 0}`} detail={messageCount ? 'Le mur commence à vivre.' : 'Silence radio.'} />
           <Quest title="Plume du bureau" value={mostInspired ? mostInspired.player : '—'} detail={mostInspired ? `“${mostInspired.note.slice(0, 56)}${mostInspired.note.length > 56 ? '…' : ''}”` : 'Aucun message'} />
         </div>
       </section>
