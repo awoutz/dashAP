@@ -35,6 +35,11 @@ function formatDate(value, short = false) {
   return d.toLocaleDateString('fr-FR', short ? { day: '2-digit', month: '2-digit' } : undefined);
 }
 
+function dayDiffFromTerm(value) {
+  if (!value) return 0;
+  return Math.round((new Date(`${value}T00:00:00`) - new Date(`${TERM_DATE}T00:00:00`)) / 86400000);
+}
+
 function daysBetween(a, b) {
   if (!a || !b) return 9999;
   const da = new Date(`${a}T00:00:00`);
@@ -122,7 +127,7 @@ function dateRange(center, spread = 6) {
 }
 
 function badgeFor(bet) {
-  const diff = Math.round((new Date(`${bet.birth_date}T00:00:00`) - new Date(`${TERM_DATE}T00:00:00`)) / 86400000);
+  const diff = dayDiffFromTerm(bet.birth_date);
   const w = toNumberOrNull(bet.weight);
   if (diff < -2) return 'Team impatience';
   if (diff > 2) return 'Bébé chill';
@@ -142,6 +147,7 @@ function App() {
   const [adminPin, setAdminPin] = React.useState('');
   const [wizardStep, setWizardStep] = React.useState(0);
   const [selectedTicket, setSelectedTicket] = React.useState(null);
+  const [participationOpen, setParticipationOpen] = React.useState(false);
 
   async function loadData() {
     setLoading(true);
@@ -164,17 +170,27 @@ function App() {
     const avgHeight = mean(bets.map((b) => b.height));
     const commonDate = mode(bets.map((b) => b.birth_date));
     const names = bets.map((b) => b.first_name).filter(Boolean);
-    return { sex, avgWeight, avgHeight, commonDate, topName: mode(names), participants: bets.length };
+    const early = bets.filter((b) => dayDiffFromTerm(b.birth_date) < 0).length;
+    const exactTerm = bets.filter((b) => dayDiffFromTerm(b.birth_date) === 0).length;
+    const late = bets.filter((b) => dayDiffFromTerm(b.birth_date) > 0).length;
+    return { sex, avgWeight, avgHeight, commonDate, topName: mode(names), participants: bets.length, early, exactTerm, late };
   }, [bets]);
 
   const timeline = dateRange(TERM_DATE, 6).map((date) => ({ date, items: bets.filter((b) => b.birth_date === date) }));
+  const confidence = Math.min(96, 28 + bets.length * 8);
+  const messages = bets.filter((b) => b.note).slice(0, 8);
+  const sortedByDate = [...bets].sort((a, b) => a.birth_date.localeCompare(b.birth_date));
+  const earliest = sortedByDate[0];
+  const latest = sortedByDate[sortedByDate.length - 1];
+  const heaviest = [...bets].sort((a, b) => (toNumberOrNull(b.weight) || 0) - (toNumberOrNull(a.weight) || 0))[0];
+  const mostInspired = [...bets].filter((b) => b.note).sort((a, b) => b.note.length - a.note.length)[0];
 
   const wizard = [
-    { title: 'Identité', sub: 'Qui ose poser son pari ?', fields: ['player'] },
-    { title: 'Timing', sub: 'Le jour choisi par les astres.', fields: ['birth_date'] },
-    { title: 'Profil bébé', sub: 'Fille, garçon, chaos maîtrisé.', fields: ['sex', 'first_name'] },
-    { title: 'Mensurations', sub: 'On sort la balance de précision.', fields: ['weight', 'height'] },
-    { title: 'Punchline', sub: 'La trace écrite de la mauvaise foi.', fields: ['note'] },
+    { title: 'Identité', sub: 'Qui pose son ticket ?', fields: ['player'] },
+    { title: 'Date', sub: 'Le jour estimé.', fields: ['birth_date'] },
+    { title: 'Profil', sub: 'Sexe et prénom.', fields: ['sex', 'first_name'] },
+    { title: 'Mesures', sub: 'Poids et taille.', fields: ['weight', 'height'] },
+    { title: 'Message', sub: 'Petit mot sympa ou punchline.', fields: ['note'] },
   ];
 
   function setField(key, value) { setBet((current) => ({ ...current, [key]: value })); }
@@ -184,7 +200,7 @@ function App() {
     if (!bet.player.trim()) return setMessage('Il manque ton nom. Même les oracles ont une identité.');
     const { error } = await supabase.from('bets').insert(cleanBetPayload(bet));
     if (error) return setMessage(`Erreur enregistrement : ${error.message}`);
-    setBet(defaultBet); setWizardStep(0); setMessage('Ticket validé. La prophétie est en base.'); await loadData();
+    setBet(defaultBet); setWizardStep(0); setParticipationOpen(false); setMessage('Ticket validé. Pari + message enregistrés.'); await loadData();
   }
 
   async function unlockAdmin(event) {
@@ -219,65 +235,69 @@ function App() {
   return <div className="app-shell">
     <div className="aurora aurora-a" /><div className="aurora aurora-b" />
     <main className="app-grid">
-      <section className="hero-panel">
+      <section className="hero-panel zone-general">
         <div className="brand-pill">👶 Baby Bet Arena · POC over-achieved</div>
         <h1>Les paris du bébé de Marine</h1>
-        <p className="hero-copy">Une mini arène de pronostics : tickets, consensus du bureau, timeline, cagnotte et cérémonie finale.</p>
+        <p className="hero-copy">Une expérience unique pour le bureau : on parie, on laisse un message, on participe au cadeau, puis on révèle le classement final.</p>
         <div className="hero-actions">
-          <a href={CAGNOTTE_URL} target="_blank" rel="noreferrer" className="cta-primary">🎁 Participer à la cagnotte</a>
-          <button className="cta-secondary" onClick={() => document.getElementById('wizard')?.scrollIntoView({ behavior: 'smooth' })}>🎲 Poser un pari</button>
-        </div>
-        <div className="hero-metrics">
-          <Metric label="Participants" value={stats.participants} />
-          <Metric label="Terme" value="25/06" />
-          <Metric label="Consensus" value={stats.sex} />
+          <button className="cta-primary huge" onClick={() => setParticipationOpen(true)}>🎲 Participer maintenant</button>
+          <a href={CAGNOTTE_URL} target="_blank" rel="noreferrer" className="cta-secondary">🎁 Aller à la cagnotte</a>
         </div>
       </section>
 
-      <section className="command-panel">
-        <div className="panel-title"><span>🧠</span><div><h2>Consensus engine</h2><p>Science douteuse, rendu premium.</p></div></div>
-        <div className="consensus-card">
-          <div className="prediction-line">{stats.sex} · {formatDate(stats.commonDate, true)} · {stats.avgWeight ? `${stats.avgWeight} g` : '—'} · {stats.topName}</div>
-          <div className="confidence"><span style={{ width: `${Math.min(94, 25 + bets.length * 9)}%` }} /></div>
-          <small>Indice de confiance : {Math.min(94, 25 + bets.length * 9)} %, basé sur absolument aucune rigueur médicale.</small>
-        </div>
-        <div className="stat-grid">
-          <Metric label="Date favorite" value={formatDate(stats.commonDate, true)} />
-          <Metric label="Poids moyen" value={stats.avgWeight ? `${stats.avgWeight}g` : '—'} />
-          <Metric label="Taille moyenne" value={stats.avgHeight ? `${stats.avgHeight}cm` : '—'} />
-          <Metric label="Top prénom" value={stats.topName} />
+      <section className="consensus-strip">
+        <div className="strip-title"><span>🧠</span><div><b>Consensus du bureau</b><small>Résumé exécutif des pronostics, sans rigueur scientifique.</small></div></div>
+        <Metric label="Sexe" value={stats.sex} />
+        <Metric label="Date" value={formatDate(stats.commonDate, true)} />
+        <Metric label="Poids" value={stats.avgWeight ? `${stats.avgWeight}g` : '—'} />
+        <Metric label="Taille" value={stats.avgHeight ? `${stats.avgHeight}cm` : '—'} />
+        <Metric label="Prénom" value={stats.topName} />
+        <div className="confidence-mini"><span style={{ width: `${confidence}%` }} /><b>{confidence}%</b></div>
+      </section>
+
+      <section className="info-panel">
+        <div className="panel-title"><span>📌</span><div><h2>Mode d’emploi</h2><p>Trois gestes, zéro prise de tête.</p></div></div>
+        <div className="info-cards">
+          <InfoCard icon="🎲" title="1. Je pose mon pari" text="Date, sexe, prénom, poids, taille. Le ticket est public dans le wall." />
+          <InfoCard icon="💌" title="2. Je laisse un mot" text="Le commentaire sert aussi de message sympa pour Marine." />
+          <InfoCard icon="🎁" title="3. Je participe au cadeau" text="La cagnotte reste externe et sécurisée côté Le Pot Commun." />
         </div>
       </section>
 
-      <section id="wizard" className="wizard-panel">
-        <div className="panel-title"><span>🎲</span><div><h2>{current.title}</h2><p>{current.sub}</p></div></div>
-        <div className="progress-steps">{wizard.map((s, i) => <button key={s.title} className={i === wizardStep ? 'active' : ''} onClick={() => setWizardStep(i)}>{i + 1}</button>)}</div>
-        <form onSubmit={submitBet}>
-          <AnimatePresence mode="wait">
-            <motion.div key={wizardStep} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} className="wizard-card">
-              {current.fields.includes('player') && <Field label="Ton nom"><input value={bet.player} onChange={(e) => setField('player', e.target.value)} placeholder="Ex : Gabriel" /></Field>}
-              {current.fields.includes('birth_date') && <Field label="Date estimée"><input type="date" value={bet.birth_date} onChange={(e) => setField('birth_date', e.target.value)} /></Field>}
-              {current.fields.includes('sex') && <Field label="Sexe"><div className="choice-row">{['Fille','Garçon','Surprise totale'].map((x) => <button type="button" key={x} className={bet.sex === x ? 'choice active' : 'choice'} onClick={() => setField('sex', x)}>{x}</button>)}</div></Field>}
-              {current.fields.includes('first_name') && <Field label="Prénom"><input value={bet.first_name} onChange={(e) => setField('first_name', e.target.value)} placeholder="Norris, Chuck, Louise..." /></Field>}
-              {current.fields.includes('weight') && <div className="split"><Field label="Poids"><input type="number" min="1000" max="6000" value={bet.weight} onChange={(e) => setField('weight', e.target.value)} /></Field><Field label="Taille"><input type="number" min="35" max="65" value={bet.height} onChange={(e) => setField('height', e.target.value)} /></Field></div>}
-              {current.fields.includes('note') && <Field label="Commentaire"><textarea value={bet.note} onChange={(e) => setField('note', e.target.value)} placeholder="Je le sens, c’est scientifique." /></Field>}
-            </motion.div>
-          </AnimatePresence>
-          <div className="wizard-actions">
-            <button type="button" className="cta-secondary" disabled={wizardStep === 0} onClick={() => setWizardStep((s) => Math.max(0, s - 1))}>Retour</button>
-            {wizardStep < wizard.length - 1 ? <button type="button" className="cta-primary" onClick={() => setWizardStep((s) => s + 1)}>Suite</button> : <button className="cta-primary">Valider le ticket</button>}
-          </div>
-        </form>
+      <section className="participation-zone" id="participer">
+        <div className="participation-copy">
+          <div className="panel-title"><span>🚀</span><div><h2>Participation cockpit</h2><p>Le formulaire n’est plus planqué : on ouvre un écran dédié.</p></div></div>
+          <p>Tu peux poser ton pari, écrire un message, puis filer à la cagnotte. Le tout est séparé du dashboard pour éviter l’effet “où je dois cliquer ?”.</p>
+        </div>
+        <button className="participation-launch" onClick={() => setParticipationOpen(true)}>
+          <span>Ouvrir le cockpit</span>
+          <b>Pari + message + cagnotte</b>
+        </button>
       </section>
 
       <section className="timeline-panel">
-        <div className="panel-title"><span>📅</span><div><h2>Timeline des dates</h2><p>Où le bureau concentre ses prophéties.</p></div></div>
+        <div className="panel-title"><span>📅</span><div><h2>Timeline des dates</h2><p>Les clusters de prophéties, autour du terme.</p></div></div>
         <div className="timeline">{timeline.map((day) => <div key={day.date} className={day.date === TERM_DATE ? 'day term' : 'day'}><b>{formatDate(day.date, true)}</b><div className="dots">{day.items.slice(0, 5).map((b) => <span key={b.id} title={b.player}>{initials(b.player)}</span>)}</div><small>{day.items.length}</small></div>)}</div>
       </section>
 
-      <section className="tickets-panel">
-        <div className="panel-title"><span>🎟️</span><div><h2>Wall of tickets</h2><p>{loading ? 'Chargement...' : `${bets.length} tickets dans l’arène.`}</p></div></div>
+      <section className="side-quests-panel">
+        <div className="panel-title"><span>🏅</span><div><h2>Sous-paris automatiques</h2><p>Des mini-titres qui ajoutent du jeu sans nouveau formulaire.</p></div></div>
+        <div className="quest-grid">
+          <Quest title="Team impatience" value={`${stats.early} avant terme`} detail={earliest ? `${earliest.player} ouvre le bal au ${formatDate(earliest.birth_date, true)}` : 'Aucun ticket'} />
+          <Quest title="Team chill" value={`${stats.late} après terme`} detail={latest ? `${latest.player} voit large au ${formatDate(latest.birth_date, true)}` : 'Aucun ticket'} />
+          <Quest title="Poids lourd" value={heaviest ? `${heaviest.weight || '—'} g` : '—'} detail={heaviest ? `${heaviest.player} ne fait pas dans le léger` : 'Aucun ticket'} />
+          <Quest title="Plume du bureau" value={mostInspired ? mostInspired.player : '—'} detail={mostInspired ? `“${mostInspired.note.slice(0, 56)}${mostInspired.note.length > 56 ? '…' : ''}”` : 'Aucun message'} />
+        </div>
+      </section>
+
+      <section className="tickets-panel zone-details">
+        <div className="panel-title"><span>🎟️</span><div><h2>Détail des participations</h2><p>{loading ? 'Chargement...' : `${bets.length} tickets dans l’arène.`}</p></div></div>
         <div className="tickets-wall">{bets.map((item) => <motion.button key={item.id} whileHover={{ y: -4 }} className="ticket" onClick={() => setSelectedTicket(item)}><div className="ticket-top"><span>{initials(item.player)}</span><b>{item.player}</b></div><div className="ticket-prediction">{formatDate(item.birth_date, true)} · {item.sex} · {item.first_name || 'Mystère'}</div><div className="ticket-meta"><span>{item.weight || '—'}g</span><span>{item.height || '—'}cm</span><span>{badgeFor(item)}</span></div></motion.button>)}</div>
+      </section>
+
+      <section className="message-wall-panel">
+        <div className="panel-title"><span>💌</span><div><h2>Mur des messages</h2><p>Les mots sympas remontent ici automatiquement.</p></div></div>
+        <div className="message-wall">{messages.length ? messages.map((m) => <article key={m.id} className="message-card"><b>{m.player}</b><p>“{m.note}”</p></article>) : <div className="empty-state">Aucun message pour l’instant. Le prochain ticket peut sauver l’ambiance.</div>}</div>
       </section>
 
       <section className="admin-panel">
@@ -297,11 +317,53 @@ function App() {
 
     {message && <div className="toast">{message}</div>}
 
+    <AnimatePresence>{participationOpen && <ParticipationModal bet={bet} setField={setField} current={current} wizard={wizard} wizardStep={wizardStep} setWizardStep={setWizardStep} submitBet={submitBet} onClose={() => setParticipationOpen(false)} />}</AnimatePresence>
+
     <AnimatePresence>{selectedTicket && <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedTicket(null)}><motion.div className="modal-card" initial={{ scale: .92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: .92, opacity: 0 }} onClick={(e) => e.stopPropagation()}><button className="modal-close" onClick={() => setSelectedTicket(null)}>×</button><div className="ticket-big-avatar">{initials(selectedTicket.player)}</div><h2>{selectedTicket.player}</h2><p>{selectedTicket.note || 'Aucun commentaire. La sobriété est un choix.'}</p><div className="modal-grid"><Metric label="Date" value={formatDate(selectedTicket.birth_date)} /><Metric label="Sexe" value={selectedTicket.sex} /><Metric label="Prénom" value={selectedTicket.first_name || 'Mystère'} /><Metric label="Poids" value={`${selectedTicket.weight || '—'} g`} /><Metric label="Taille" value={`${selectedTicket.height || '—'} cm`} /><Metric label="Badge" value={badgeFor(selectedTicket)} /></div>{adminMode && <button className="danger" onClick={() => removeBet(selectedTicket.id)}>Supprimer ce ticket</button>}</motion.div></motion.div>}</AnimatePresence>
   </div>;
 }
 
+function ParticipationModal({ bet, setField, current, wizard, wizardStep, setWizardStep, submitBet, onClose }) {
+  return <motion.div className="participation-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    <motion.div className="participation-modal" initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}>
+      <button className="modal-close floating" onClick={onClose}>×</button>
+      <aside className="participation-aside">
+        <div className="brand-pill">🚀 Participation cockpit</div>
+        <h2>Un seul écran pour tout faire.</h2>
+        <p>Tu poses ton pari, tu laisses un message sympa, puis tu peux participer au cadeau sans chercher où cliquer.</p>
+        <div className="gift-card">
+          <span>🎁 Cagnotte officielle</span>
+          <b>Le pari est gratuit, le cadeau est optionnel.</b>
+          <a href={CAGNOTTE_URL} target="_blank" rel="noreferrer" className="cta-primary">Ouvrir Le Pot Commun</a>
+        </div>
+      </aside>
+      <section className="participation-form">
+        <div className="panel-title"><span>🎲</span><div><h2>{current.title}</h2><p>{current.sub}</p></div></div>
+        <div className="progress-steps">{wizard.map((s, i) => <button type="button" key={s.title} className={i === wizardStep ? 'active' : ''} onClick={() => setWizardStep(i)}>{i + 1}</button>)}</div>
+        <form onSubmit={submitBet}>
+          <AnimatePresence mode="wait">
+            <motion.div key={wizardStep} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} className="wizard-card">
+              {current.fields.includes('player') && <Field label="Ton nom"><input value={bet.player} onChange={(e) => setField('player', e.target.value)} placeholder="Ex : Gabriel" /></Field>}
+              {current.fields.includes('birth_date') && <Field label="Date estimée"><input type="date" value={bet.birth_date} onChange={(e) => setField('birth_date', e.target.value)} /></Field>}
+              {current.fields.includes('sex') && <Field label="Sexe"><div className="choice-row">{['Fille','Garçon','Surprise totale'].map((x) => <button type="button" key={x} className={bet.sex === x ? 'choice active' : 'choice'} onClick={() => setField('sex', x)}>{x}</button>)}</div></Field>}
+              {current.fields.includes('first_name') && <Field label="Prénom"><input value={bet.first_name} onChange={(e) => setField('first_name', e.target.value)} placeholder="Norris, Chuck, Louise..." /></Field>}
+              {current.fields.includes('weight') && <div className="split"><Field label="Poids"><input type="number" min="1000" max="6000" value={bet.weight} onChange={(e) => setField('weight', e.target.value)} /></Field><Field label="Taille"><input type="number" min="35" max="65" value={bet.height} onChange={(e) => setField('height', e.target.value)} /></Field></div>}
+              {current.fields.includes('note') && <Field label="Message sympa"><textarea value={bet.note} onChange={(e) => setField('note', e.target.value)} placeholder="Petit mot pour Marine, ou punchline de pronostic." /></Field>}
+            </motion.div>
+          </AnimatePresence>
+          <div className="wizard-actions">
+            <button type="button" className="cta-secondary" disabled={wizardStep === 0} onClick={() => setWizardStep((s) => Math.max(0, s - 1))}>Retour</button>
+            {wizardStep < wizard.length - 1 ? <button type="button" className="cta-primary" onClick={() => setWizardStep((s) => s + 1)}>Suite</button> : <button className="cta-primary">Valider mon ticket</button>}
+          </div>
+        </form>
+      </section>
+    </motion.div>
+  </motion.div>;
+}
+
 function Field({ label, children }) { return <label className="field"><span>{label}</span>{children}</label>; }
 function Metric({ label, value }) { return <div className="metric"><span>{label}</span><strong>{value}</strong></div>; }
+function InfoCard({ icon, title, text }) { return <article className="info-card"><span>{icon}</span><b>{title}</b><p>{text}</p></article>; }
+function Quest({ title, value, detail }) { return <article className="quest-card"><span>{title}</span><b>{value}</b><p>{detail}</p></article>; }
 
 createRoot(document.getElementById('root')).render(<App />);
