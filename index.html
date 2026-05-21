@@ -7,9 +7,121 @@
     <style>
       .automation-panel { display: none !important; }
       .confidence-mini { display: none !important; }
-      .consensus-strip { grid-template-columns: 1.5fr repeat(5, 1fr) !important; }
-      @media (max-width: 1050px) { .consensus-strip { grid-template-columns: 1fr 1fr 1fr !important; } }
-      @media (max-width: 680px) { .consensus-strip { grid-template-columns: 1fr !important; } }
+
+      @media (min-width: 1051px) {
+        .app-shell { padding: 14px 22px !important; }
+        .app-grid {
+          max-width: 1480px !important;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+          gap: 14px !important;
+        }
+
+        .hero-panel {
+          min-height: 255px !important;
+          padding: 22px !important;
+        }
+        .hero-panel h1 {
+          max-width: 1050px !important;
+          font-size: clamp(44px, 6vw, 82px) !important;
+        }
+        .hero-copy { margin-top: 12px !important; font-size: 17px !important; }
+        .hero-actions { margin-top: 16px !important; }
+
+        .consensus-strip {
+          grid-template-columns: 1.2fr repeat(5, minmax(0, 1fr)) !important;
+          gap: 8px !important;
+          padding: 12px !important;
+        }
+        .consensus-strip .metric { padding: 8px 10px !important; }
+        .consensus-strip .metric strong { font-size: 16px !important; }
+        .metric small { display:block; margin-top:3px; color:#94a3b8; font-size:11px; line-height:1.15; }
+
+        .info-panel, .participation-zone, .side-quests-panel, .message-wall-panel, .tickets-panel, .admin-panel {
+          padding: 18px !important;
+          border-radius: 28px !important;
+        }
+
+        .info-cards { grid-template-columns: repeat(3, 1fr) !important; }
+        .info-card { padding: 14px !important; border-radius: 22px !important; }
+        .info-card > span { font-size: 24px !important; }
+        .info-card b { margin-top: 6px !important; font-size: 16px !important; }
+        .info-card p { font-size: 13px !important; line-height: 1.32 !important; }
+
+        .participation-zone {
+          min-height: auto !important;
+          grid-template-columns: 1.2fr .8fr !important;
+        }
+        .participation-launch { min-height: 86px !important; border-radius: 24px !important; }
+        .participation-launch b { font-size: 22px !important; }
+
+        .side-quests-panel {
+          grid-column: 1 !important;
+          grid-row: 5 !important;
+        }
+        .message-wall-panel {
+          grid-column: 2 !important;
+          grid-row: 5 !important;
+        }
+        .tickets-panel {
+          grid-column: 1 / -1 !important;
+          grid-row: 6 !important;
+        }
+        .admin-panel {
+          grid-column: 1 / -1 !important;
+          grid-row: 7 !important;
+        }
+
+        .panel-title { margin-bottom: 12px !important; }
+        .panel-title > span { width: 38px !important; height: 38px !important; border-radius: 15px !important; }
+        .panel-title h2 { font-size: 22px !important; }
+        .panel-title p { font-size: 13px !important; }
+
+        .quest-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          gap: 10px !important;
+        }
+        .quest-card {
+          min-height: 104px !important;
+          padding: 12px 14px !important;
+          border-radius: 20px !important;
+        }
+        .quest-card span { font-size: 11px !important; }
+        .quest-card b { font-size: 18px !important; }
+        .quest-card p { font-size: 13px !important; line-height: 1.3 !important; }
+
+        .message-wall {
+          max-height: 310px !important;
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          gap: 10px !important;
+        }
+        .message-card {
+          padding: 12px !important;
+          border-radius: 18px !important;
+        }
+        .message-card p { font-size: 13px !important; line-height: 1.32 !important; }
+
+        .tickets-wall {
+          grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+          gap: 10px !important;
+        }
+        .ticket {
+          padding: 12px !important;
+          border-radius: 20px !important;
+        }
+        .ticket-top span { width: 34px !important; height: 34px !important; border-radius: 12px !important; }
+        .ticket-top b { font-size: 16px !important; }
+        .ticket-prediction { margin-top: 8px !important; font-size: 14px !important; }
+        .ticket-meta { margin-top: 8px !important; gap: 5px !important; }
+        .ticket-meta span { padding: 5px 7px !important; font-size: 11px !important; }
+        .ticket-badges { padding-top: 8px !important; }
+      }
+
+      @media (max-width: 1050px) {
+        .consensus-strip { grid-template-columns: 1fr 1fr 1fr !important; }
+      }
+      @media (max-width: 680px) {
+        .consensus-strip { grid-template-columns: 1fr !important; }
+      }
     </style>
   </head>
   <body>
