@@ -36,7 +36,6 @@ const steps = [
   { title: 'Prénom', subtitle: 'Le pari le plus risqué.' },
   { title: 'Poids et taille', subtitle: 'Le poids se saisit en kg.' },
   { title: 'Message', subtitle: 'Un petit mot pour Marine.' },
-  { title: 'Récapitulatif', subtitle: 'Dernière vérification avant sauvegarde.' },
 ];
 
 function parseNumber(value) {
@@ -77,6 +76,20 @@ function normalizeName(value) {
 function daysBetween(a, b) {
   if (!a || !b) return 9999;
   return Math.abs(Math.round((new Date(`${a}T00:00:00`) - new Date(`${b}T00:00:00`)) / 86400000));
+}
+
+function dayDiffFromTerm(value) {
+  if (!value) return 0;
+  return Math.round((new Date(`${value}T00:00:00`) - new Date(`${TERM_DATE}T00:00:00`)) / 86400000);
+}
+
+function openDatePicker(event) {
+  const input = event.currentTarget;
+  if (typeof input.showPicker === 'function') {
+    try { input.showPicker(); } catch { input.focus(); }
+  } else {
+    input.focus();
+  }
 }
 
 function countBy(values) {
@@ -167,7 +180,7 @@ function initials(name) {
 
 function badgesFor(bet) {
   const badges = [];
-  const diff = Math.round((new Date(`${bet.birth_date}T00:00:00`) - new Date(`${TERM_DATE}T00:00:00`)) / 86400000);
+  const diff = dayDiffFromTerm(bet.birth_date);
   const weight = toWeightGrams(bet.weight);
 
   if (diff < -2) badges.push({ icon: '⚡', label: 'Team impatience' });
@@ -191,6 +204,7 @@ function App() {
   const [message, setMessage] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const [participationOpen, setParticipationOpen] = React.useState(false);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [step, setStep] = React.useState(0);
   const [adminMode, setAdminMode] = React.useState(false);
   const [adminPinInput, setAdminPinInput] = React.useState('');
@@ -230,6 +244,13 @@ function App() {
   }, [bets, result]);
 
   const messages = bets.filter((item) => item.note).slice(0, 8);
+  const sortedByDate = [...bets].sort((a, b) => a.birth_date.localeCompare(b.birth_date));
+  const earliest = sortedByDate[0];
+  const latest = sortedByDate[sortedByDate.length - 1];
+  const heaviest = [...bets].sort((a, b) => (toWeightGrams(b.weight) || 0) - (toWeightGrams(a.weight) || 0))[0];
+  const mostInspired = [...bets].filter((item) => item.note).sort((a, b) => b.note.length - a.note.length)[0];
+  const earlyCount = bets.filter((item) => dayDiffFromTerm(item.birth_date) < 0).length;
+  const lateCount = bets.filter((item) => dayDiffFromTerm(item.birth_date) > 0).length;
 
   function updateBet(key, value) {
     setBet((current) => ({ ...current, [key]: value }));
@@ -247,14 +268,17 @@ function App() {
     setStep((current) => Math.max(0, current - 1));
   }
 
-  async function submitBet(event) {
+  function requestSubmit(event) {
     event.preventDefault();
     if (!bet.player.trim()) {
       setStep(0);
       setMessage('Il manque ton nom pour valider le ticket.');
       return;
     }
+    setConfirmOpen(true);
+  }
 
+  async function submitBet() {
     const payload = {
       player: bet.player.trim(),
       birth_date: bet.birth_date,
@@ -273,6 +297,7 @@ function App() {
 
     setBet(defaultBet);
     setStep(0);
+    setConfirmOpen(false);
     setParticipationOpen(false);
     setMessage('Ticket validé. Ton pari et ton message sont enregistrés.');
     await loadData();
@@ -357,6 +382,16 @@ function App() {
         <button className="participation-launch" onClick={() => setParticipationOpen(true)}><span>Participer</span><b>Créer mon ticket</b></button>
       </section>
 
+      <section className="side-quests-panel">
+        <Title icon="🏅" title="Badges collectifs" sub="Les petits titres du bureau se mettent à jour avec les tickets." />
+        <div className="quest-grid">
+          <Quest title="Team impatience" value={`${earlyCount} avant terme`} detail={earliest ? `${earliest.player} ouvre le bal au ${formatDate(earliest.birth_date, true)}` : 'Aucun ticket'} />
+          <Quest title="Team chill" value={`${lateCount} après terme`} detail={latest ? `${latest.player} voit large au ${formatDate(latest.birth_date, true)}` : 'Aucun ticket'} />
+          <Quest title="Poids lourd" value={heaviest ? formatWeight(heaviest.weight) : '—'} detail={heaviest ? `${heaviest.player} a tenté le plus gros bébé` : 'Aucun ticket'} />
+          <Quest title="Plume du bureau" value={mostInspired ? mostInspired.player : '—'} detail={mostInspired ? `“${mostInspired.note.slice(0, 56)}${mostInspired.note.length > 56 ? '…' : ''}”` : 'Aucun message'} />
+        </div>
+      </section>
+
       <section className="tickets-panel">
         <Title icon="🎟️" title="Les tickets de participation" sub={loading ? 'Chargement...' : `${bets.length} ticket${bets.length > 1 ? 's' : ''} enregistré${bets.length > 1 ? 's' : ''}.`} />
         <div className="tickets-wall">
@@ -378,7 +413,7 @@ function App() {
         <Title icon="👑" title="Résultat final" sub="À remplir après la naissance pour révéler le classement." />
         {!adminMode && <form onSubmit={unlockAdmin} className="admin-login"><input type="password" value={adminPinInput} onChange={(event) => setAdminPinInput(event.target.value)} placeholder="PIN admin" /><button>Déverrouiller</button></form>}
         <div className="result-fields">
-          <input type="date" value={result.birth_date || ''} disabled={!adminMode} onChange={(event) => setResult((current) => ({ ...current, birth_date: event.target.value }))} />
+          <input type="date" value={result.birth_date || ''} disabled={!adminMode} onPointerDown={openDatePicker} onFocus={openDatePicker} onChange={(event) => setResult((current) => ({ ...current, birth_date: event.target.value }))} />
           <select value={result.sex || ''} disabled={!adminMode} onChange={(event) => setResult((current) => ({ ...current, sex: event.target.value }))}><option value="">Sexe</option><option>Fille</option><option>Garçon</option><option>Surprise totale</option></select>
           <input value={result.first_name || ''} disabled={!adminMode} onChange={(event) => setResult((current) => ({ ...current, first_name: event.target.value }))} placeholder="Prénom" />
           <input type="number" min="1" max="6" step="0.1" value={gramsToKgInput(result.weight)} disabled={!adminMode} onChange={(event) => setResult((current) => ({ ...current, weight: event.target.value }))} placeholder="Poids kg" />
@@ -391,13 +426,13 @@ function App() {
 
     {message && <div className="toast">{message}</div>}
 
-    <AnimatePresence>{participationOpen && <BetModal bet={bet} step={step} setStep={setStep} updateBet={updateBet} goNext={goNext} goPrevious={goPrevious} submitBet={submitBet} close={() => setParticipationOpen(false)} />}</AnimatePresence>
-
+    <AnimatePresence>{participationOpen && <BetModal bet={bet} step={step} setStep={setStep} updateBet={updateBet} goNext={goNext} goPrevious={goPrevious} requestSubmit={requestSubmit} close={() => setParticipationOpen(false)} />}</AnimatePresence>
+    <AnimatePresence>{confirmOpen && <ConfirmModal bet={bet} submitBet={submitBet} close={() => setConfirmOpen(false)} />}</AnimatePresence>
     <AnimatePresence>{selectedTicket && <TicketModal ticket={selectedTicket} adminMode={adminMode} removeBet={removeBet} close={() => setSelectedTicket(null)} />}</AnimatePresence>
   </div>;
 }
 
-function BetModal({ bet, step, setStep, updateBet, goNext, goPrevious, submitBet, close }) {
+function BetModal({ bet, step, setStep, updateBet, goNext, goPrevious, requestSubmit, close }) {
   return <motion.div className="participation-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
     <motion.div className="participation-modal" initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}>
       <button className="modal-close floating" onClick={close}>×</button>
@@ -410,23 +445,43 @@ function BetModal({ bet, step, setStep, updateBet, goNext, goPrevious, submitBet
       <section className="participation-form">
         <Title icon="🎲" title={steps[step].title} sub={steps[step].subtitle} />
         <div className="progress-steps">{steps.map((item, index) => <button type="button" key={item.title} className={index === step ? 'active' : ''} onClick={() => setStep(index)}>{index + 1}</button>)}</div>
-        <form onSubmit={submitBet}>
+        <form onSubmit={requestSubmit}>
           <AnimatePresence mode="wait">
             <motion.div key={step} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} className="wizard-card">
               {step === 0 && <Field label="Ton nom"><input value={bet.player} onChange={(event) => updateBet('player', event.target.value)} placeholder="Ex : Gabriel" /></Field>}
-              {step === 1 && <><Field label="Date estimée"><input type="date" value={bet.birth_date} onChange={(event) => updateBet('birth_date', event.target.value)} /></Field><Field label="Sexe"><div className="choice-row">{['Fille', 'Garçon', 'Surprise totale'].map((value) => <button type="button" key={value} className={bet.sex === value ? 'choice active' : 'choice'} onClick={() => updateBet('sex', value)}>{value}</button>)}</div></Field></>}
+              {step === 1 && <><Field label="Date estimée"><input type="date" value={bet.birth_date} onPointerDown={openDatePicker} onFocus={openDatePicker} onChange={(event) => updateBet('birth_date', event.target.value)} /></Field><Field label="Sexe"><div className="choice-row">{['Fille', 'Garçon', 'Surprise totale'].map((value) => <button type="button" key={value} className={bet.sex === value ? 'choice active' : 'choice'} onClick={() => updateBet('sex', value)}>{value}</button>)}</div></Field></>}
               {step === 2 && <Field label="Prénom parié"><input value={bet.first_name} onChange={(event) => updateBet('first_name', event.target.value)} placeholder="Louise, Noé, Norris..." /></Field>}
               {step === 3 && <div className="split"><Field label="Poids en kg"><input type="number" min="1" max="6" step="0.1" value={bet.weight} onChange={(event) => updateBet('weight', event.target.value)} placeholder="3.2" /></Field><Field label="Taille en cm"><input type="number" min="35" max="65" value={bet.height} onChange={(event) => updateBet('height', event.target.value)} /></Field></div>}
               {step === 4 && <Field label="Message sympa"><textarea value={bet.note} onChange={(event) => updateBet('note', event.target.value)} placeholder="Petit mot pour Marine." /></Field>}
-              {step === 5 && <div className="recap-card"><span>Récapitulatif</span><h3>{bet.player || 'Nom manquant'}</h3><p>{formatDate(bet.birth_date)} · {bet.sex} · {bet.first_name || 'Prénom mystère'}</p><p>{formatWeight(bet.weight)} · {bet.height || '—'} cm</p>{bet.note && <em>“{bet.note}”</em>}</div>}
             </motion.div>
           </AnimatePresence>
           <div className="wizard-actions">
             <button type="button" className="cta-secondary" disabled={step === 0} onClick={goPrevious}>Précédent</button>
-            {step < steps.length - 1 ? <button type="button" className="cta-primary" onClick={goNext}>Suite</button> : <button type="submit" className="cta-primary">Sauvegarder le pari</button>}
+            {step < steps.length - 1 ? <button type="button" className="cta-primary" onClick={goNext}>Suite</button> : <button type="submit" className="cta-primary">Valider</button>}
           </div>
         </form>
       </section>
+    </motion.div>
+  </motion.div>;
+}
+
+function ConfirmModal({ bet, submitBet, close }) {
+  return <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={close}>
+    <motion.div className="modal-card" initial={{ scale: .92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: .92, opacity: 0 }} onClick={(event) => event.stopPropagation()}>
+      <button className="modal-close" onClick={close}>×</button>
+      <div className="ticket-big-avatar">?</div>
+      <h2>Tu confirmes ce pari ?</h2>
+      <p>{bet.player || 'Nom manquant'}</p>
+      <div className="modal-grid">
+        <Metric label="Date" value={formatDate(bet.birth_date)} />
+        <Metric label="Sexe" value={bet.sex} />
+        <Metric label="Prénom" value={bet.first_name || 'Prénom mystère'} />
+        <Metric label="Poids" value={formatWeight(bet.weight)} />
+        <Metric label="Taille" value={`${bet.height || '—'} cm`} />
+        <Metric label="Message" value={bet.note ? 'Oui' : 'Non'} />
+      </div>
+      {bet.note && <p>“{bet.note}”</p>}
+      <div className="wizard-actions"><button type="button" className="cta-secondary" onClick={close}>Non, modifier</button><button type="button" className="cta-primary" onClick={submitBet}>Oui, sauvegarder</button></div>
     </motion.div>
   </motion.div>;
 }
@@ -459,6 +514,10 @@ function Metric({ label, value, detail }) {
 
 function InfoCard({ icon, title, text }) {
   return <article className="info-card"><span>{icon}</span><b>{title}</b><p>{text}</p></article>;
+}
+
+function Quest({ title, value, detail }) {
+  return <article className="quest-card"><span>{title}</span><b>{value}</b><p>{detail}</p></article>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
