@@ -8,23 +8,67 @@
       .automation-panel { display: none !important; }
       .confidence-mini { display: none !important; }
 
+      .data-lab-panel {
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 34px;
+        background: radial-gradient(circle at 20% 0,rgba(96,165,250,.18),transparent 34%), radial-gradient(circle at 90% 15%,rgba(251,113,133,.18),transparent 32%), rgba(15,23,42,.7);
+        box-shadow: 0 30px 90px rgba(0,0,0,.28);
+        backdrop-filter: blur(18px);
+        padding: 24px;
+        overflow: hidden;
+      }
+      .data-lab-grid { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap:14px; }
+      .chart-card { min-height: 260px; border:1px solid rgba(255,255,255,.11); border-radius:30px; background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06)); padding:18px; box-shadow:inset 0 1px 0 rgba(255,255,255,.08); }
+      .chart-head { margin-bottom: 15px; }
+      .chart-head b { display:block; font-size:18px; letter-spacing:-.035em; }
+      .chart-head span { display:block; margin-top:4px; color:#94a3b8; font-size:13px; }
+      .donut-wrap { display:grid; grid-template-columns:150px 1fr; gap:16px; align-items:center; }
+      .donut { width:150px; height:150px; border-radius:999px; display:grid; place-items:center; position:relative; box-shadow:0 22px 55px rgba(0,0,0,.28); }
+      .donut:after { content:""; position:absolute; inset:32px; border-radius:999px; background:#111827; }
+      .donut b,.donut span { position:relative; z-index:1; text-align:center; }
+      .donut b { font-size:22px; font-weight:950; letter-spacing:-.05em; }
+      .donut span { margin-top:32px; color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.08em; }
+      .legend { display:grid; gap:10px; }
+      .legend-row { display:grid; grid-template-columns:14px 1fr auto; gap:8px; align-items:center; color:#cbd5e1; }
+      .legend-row i { width:12px; height:12px; border-radius:999px; }
+      .legend-row.pink i { background:#fb7185; }
+      .legend-row.blue i { background:#60a5fa; }
+      .legend-row.gold i { background:#facc15; }
+      .legend-row b { color:white; }
+      .date-bars { height:190px; display:grid; grid-template-columns:repeat(13,1fr); gap:6px; align-items:end; }
+      .date-bar { display:grid; gap:6px; text-align:center; align-items:end; }
+      .bar-track { height:120px; border-radius:999px; background:rgba(255,255,255,.08); display:flex; align-items:end; overflow:hidden; }
+      .bar-track span { display:block; width:100%; border-radius:999px; background:linear-gradient(180deg,#facc15,#fb7185); min-height:5px; }
+      .date-bar.term .bar-track { outline:1px solid rgba(251,113,133,.6); }
+      .date-bar b { font-size:10px; color:#e2e8f0; }
+      .date-bar small { font-size:11px; color:#94a3b8; }
+      .histo { display:grid; gap:12px; }
+      .histo-row { display:grid; grid-template-columns:76px 1fr 28px; gap:10px; align-items:center; }
+      .histo-row span { font-size:12px; color:#cbd5e1; }
+      .histo-row div { height:14px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
+      .histo-row i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#60a5fa,#fb7185); }
+      .histo-row b { text-align:right; }
+      .name-cloud { display:flex; flex-wrap:wrap; gap:10px; align-content:center; min-height:170px; }
+      .name-cloud span { display:inline-flex; gap:7px; align-items:center; border-radius:999px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.1); padding:9px 12px; font-size:calc(15px * var(--power)); font-weight:950; box-shadow:0 12px 30px rgba(0,0,0,.14); }
+      .name-cloud b { display:grid; place-items:center; width:22px; height:22px; border-radius:999px; background:#fff; color:#0f172a; font-size:12px; }
+      .scatter { width:100%; height:190px; overflow:visible; }
+      .scatter line { stroke:rgba(255,255,255,.28); stroke-width:2; }
+      .scatter .gridline { stroke:rgba(255,255,255,.08); stroke-width:1; }
+      .scatter .point { fill:#fb7185; stroke:white; stroke-width:2; }
+      .scatter .point.alt { fill:#60a5fa; }
+      .scatter text { fill:#e2e8f0; font-size:10px; font-weight:900; }
+      .scatter .axis-label { fill:#94a3b8; font-size:11px; text-transform:uppercase; }
+      .engagement-stack { display:grid; gap:16px; }
+      .progress-line { display:grid; gap:8px; }
+      .progress-line div { display:flex; justify-content:space-between; color:#cbd5e1; }
+      .progress-line b { color:white; }
+      .progress-line i { height:12px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
+      .progress-line em { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#facc15,#fb7185); }
+      .empty-mini { display:grid; place-items:center; min-height:130px; border:1px dashed rgba(255,255,255,.16); border-radius:22px; color:#94a3b8; text-align:center; padding:16px; }
+
       @media (min-width: 1051px) {
         .app-shell { padding: 12px 20px !important; }
-        .app-grid {
-          max-width: 1500px !important;
-          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-          grid-template-areas:
-            "hero hero"
-            "consensus consensus"
-            "info participation"
-            "badges messages"
-            "data data"
-            "tickets tickets"
-            "admin admin" !important;
-          gap: 14px !important;
-          align-items: start !important;
-        }
-
+        .app-grid { max-width: 1500px !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; grid-template-areas: "hero hero" "consensus consensus" "info participation" "badges messages" "data data" "tickets tickets" "admin admin" !important; gap: 14px !important; align-items: start !important; }
         .hero-panel { grid-area: hero !important; min-height: 230px !important; padding: 20px !important; }
         .consensus-strip { grid-area: consensus !important; }
         .info-panel { grid-area: info !important; }
@@ -34,45 +78,37 @@
         .data-lab-panel { grid-area: data !important; padding: 16px !important; border-radius: 26px !important; }
         .tickets-panel { grid-area: tickets !important; }
         .admin-panel { grid-area: admin !important; }
-
         .hero-panel:after { font-size: 92px !important; }
         .hero-panel h1 { max-width: 1050px !important; font-size: clamp(42px, 5.6vw, 76px) !important; }
         .hero-copy { margin-top: 10px !important; font-size: 16px !important; max-width: 760px !important; }
         .hero-actions { margin-top: 14px !important; }
         .cta-primary.huge { font-size: 16px !important; padding: 13px 16px !important; }
-
         .consensus-strip { grid-template-columns: 1.25fr repeat(5, minmax(0, 1fr)) !important; gap: 8px !important; padding: 12px !important; }
         .consensus-strip .metric { padding: 8px 10px !important; min-height: 58px !important; }
         .consensus-strip .metric strong { font-size: 16px !important; }
         .metric small { display:block; margin-top:3px; color:#94a3b8; font-size:11px; line-height:1.15; }
-
         .info-panel, .participation-zone, .side-quests-panel, .message-wall-panel, .tickets-panel, .admin-panel { padding: 16px !important; border-radius: 26px !important; }
         .panel-title { margin-bottom: 10px !important; }
         .panel-title > span { width: 36px !important; height: 36px !important; border-radius: 14px !important; }
         .panel-title h2 { font-size: 21px !important; }
         .panel-title p { font-size: 13px !important; margin-top: 3px !important; }
-
         .info-cards { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
         .info-card { padding: 12px !important; border-radius: 20px !important; }
         .info-card > span { font-size: 22px !important; }
         .info-card b { margin-top: 5px !important; font-size: 15px !important; }
         .info-card p { font-size: 12px !important; line-height: 1.28 !important; }
-
         .participation-zone { min-height: 100% !important; grid-template-columns: 1.1fr .9fr !important; gap: 12px !important; }
         .participation-copy p { font-size: 13px !important; line-height: 1.35 !important; }
         .participation-launch { min-height: 82px !important; border-radius: 22px !important; padding: 16px !important; }
         .participation-launch b { font-size: 21px !important; }
-
         .quest-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 9px !important; }
         .quest-card { min-height: 92px !important; padding: 11px 12px !important; border-radius: 18px !important; }
         .quest-card span { font-size: 10px !important; letter-spacing: .07em !important; }
         .quest-card b { margin-top: 4px !important; font-size: 17px !important; line-height: 1.02 !important; }
         .quest-card p { margin-top: 6px !important; font-size: 12px !important; line-height: 1.28 !important; }
-
         .message-wall { max-height: 296px !important; display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 9px !important; overflow: auto !important; }
         .message-card { padding: 11px !important; border-radius: 18px !important; }
         .message-card p { font-size: 12px !important; line-height: 1.28 !important; }
-
         .data-lab-grid { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; gap: 10px !important; }
         .chart-card { min-height: 210px !important; padding: 12px !important; border-radius: 20px !important; }
         .chart-head { margin-bottom: 8px !important; }
@@ -87,7 +123,6 @@
         .name-cloud { min-height: 138px !important; }
         .histo-row { grid-template-columns: 62px 1fr 22px !important; }
         .scatter { height: 160px !important; }
-
         .tickets-wall { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 10px !important; }
         .ticket { padding: 12px !important; border-radius: 20px !important; }
         .ticket-top span { width: 34px !important; height: 34px !important; border-radius: 12px !important; }
@@ -98,13 +133,71 @@
         .ticket-badges { padding-top: 8px !important; }
         .admin-panel { padding-bottom: 18px !important; }
       }
-
-      @media (max-width: 1050px) { .consensus-strip { grid-template-columns: 1fr 1fr 1fr !important; } }
-      @media (max-width: 680px) { .consensus-strip { grid-template-columns: 1fr !important; } }
+      @media (max-width: 1050px) { .consensus-strip { grid-template-columns: 1fr 1fr 1fr !important; } .data-lab-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+      @media (max-width: 680px) { .consensus-strip { grid-template-columns: 1fr !important; } .data-lab-grid { grid-template-columns: 1fr; } }
     </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      (function () {
+        const SUPABASE_URL = 'https://btxmplbdeovyxytxdkzx.supabase.co';
+        const API_KEY = 'sb_publishable_3x3PgMOTCmGx8HySJ-zDmw_kfdbfFpg';
+        const TERM = '2026-06-25';
+        const fmtDate = (v) => v ? new Date(v + 'T00:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) : '—';
+        const grams = (v) => { const n = Number(v); if (!Number.isFinite(n)) return null; return n <= 20 ? Math.round(n * 1000) : Math.round(n); };
+        const countBy = (arr) => Object.entries(arr.filter(Boolean).reduce((a, v) => { a[v] = (a[v] || 0) + 1; return a; }, {})).map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count || String(a.label).localeCompare(String(b.label)));
+        const bucket = (w) => { const g = grams(w); if (g == null) return null; if (g < 2800) return '<2,8'; if (g < 3200) return '2,8-3,2'; if (g < 3600) return '3,2-3,6'; if (g < 4000) return '3,6-4'; return '4+'; };
+        const range = () => { const base = new Date(TERM + 'T00:00:00'); return Array.from({ length: 13 }, (_, i) => { const d = new Date(base); d.setDate(base.getDate() - 6 + i); return d.toISOString().slice(0,10); }); };
+        const pct = (n, d) => Math.round((n / Math.max(1, d)) * 100);
+        function chartCard(title, sub, body) { return '<article class="chart-card"><div class="chart-head"><b>' + title + '</b><span>' + sub + '</span></div>' + body + '</article>'; }
+        function renderDataLab(bets) {
+          if (document.querySelector('.data-lab-panel')) document.querySelector('.data-lab-panel').remove();
+          const total = Math.max(1, bets.length);
+          const sex = countBy(bets.map(b => b.sex));
+          const girl = sex.find(x => x.label === 'Fille')?.count || 0;
+          const boy = sex.find(x => x.label === 'Garçon')?.count || 0;
+          const surprise = Math.max(0, bets.length - girl - boy);
+          const gp = pct(girl, total), bp = pct(boy, total);
+          const dates = range().map(date => ({ date, count: bets.filter(b => b.birth_date === date).length }));
+          const maxDate = Math.max(1, ...dates.map(d => d.count));
+          const weights = countBy(bets.map(b => bucket(b.weight)).filter(Boolean));
+          const maxWeight = Math.max(1, ...weights.map(w => w.count));
+          const names = countBy(bets.map(b => b.first_name).filter(Boolean)).slice(0, 10);
+          const maxName = Math.max(1, ...names.map(n => n.count));
+          const points = bets.map(b => ({ player: b.player, weight: grams(b.weight), height: Number(b.height), note: b.note })).filter(p => Number.isFinite(p.weight) && Number.isFinite(p.height));
+          const minW = Math.min(2600, ...points.map(p => p.weight));
+          const maxW = Math.max(4300, ...points.map(p => p.weight));
+          const minH = Math.min(45, ...points.map(p => p.height));
+          const maxH = Math.max(55, ...points.map(p => p.height));
+          const withMsg = bets.filter(b => b.note).length;
+          const withName = bets.filter(b => b.first_name).length;
+          const avgNote = withMsg ? Math.round(bets.filter(b => b.note).reduce((s,b)=>s+String(b.note).length,0)/withMsg) : 0;
+          const donut = chartCard('Répartition sexe', 'Donut compact du bureau', '<div class="donut-wrap"><div class="donut" style="background:conic-gradient(#fb7185 0 ' + gp + '%, #60a5fa ' + gp + '% ' + (gp+bp) + '%, #facc15 ' + (gp+bp) + '% 100%)"><b>' + (sex[0]?.label || '—') + '</b><span>majoritaire</span></div><div class="legend"><div class="legend-row pink"><i></i><span>Fille</span><b>' + girl + '</b></div><div class="legend-row blue"><i></i><span>Garçon</span><b>' + boy + '</b></div><div class="legend-row gold"><i></i><span>Surprise</span><b>' + surprise + '</b></div></div></div>');
+          const dateBars = chartCard('Heatmap dates', 'Jours les plus chargés', '<div class="date-bars">' + dates.map(d => '<div class="date-bar ' + (d.date === TERM ? 'term' : '') + '"><div class="bar-track"><span style="height:' + (10 + d.count / maxDate * 90) + '%"></span></div><b>' + fmtDate(d.date) + '</b><small>' + d.count + '</small></div>').join('') + '</div>');
+          const histo = chartCard('Histogramme poids', 'Tranches en kg', '<div class="histo">' + (weights.length ? weights.map(w => '<div class="histo-row"><span>' + w.label + '</span><div><i style="width:' + (w.count / maxWeight * 100) + '%"></i></div><b>' + w.count + '</b></div>').join('') : '<div class="empty-mini">Pas assez de données.</div>') + '</div>');
+          const cloud = chartCard('Nuage prénoms', 'Fréquence des propositions', '<div class="name-cloud">' + (names.length ? names.map(n => '<span style="--power:' + (0.75 + n.count / maxName * 0.55) + '">' + n.label + '<b>' + n.count + '</b></span>').join('') : '<div class="empty-mini">Pas encore de prénoms.</div>') + '</div>');
+          const scatter = chartCard('Poids × taille', 'Scatterplot des tickets', points.length ? '<svg class="scatter" viewBox="0 0 360 190"><line x1="34" y1="158" x2="336" y2="158"></line><line x1="34" y1="18" x2="34" y2="158"></line><line class="gridline" x1="34" x2="336" y1="52" y2="52"></line><line class="gridline" x1="34" x2="336" y1="88" y2="88"></line><line class="gridline" x1="34" x2="336" y1="124" y2="124"></line>' + points.map((p,i) => { const x = 42 + ((p.weight - minW) / Math.max(1, maxW - minW)) * 286; const y = 150 - ((p.height - minH) / Math.max(1, maxH - minH)) * 124; return '<g><circle cx="' + x + '" cy="' + y + '" r="' + (p.note ? 8 : 6) + '" class="point ' + (i%2 ? 'alt' : '') + '"><title>' + p.player + ' · ' + Math.round(p.weight/100)/10 + 'kg · ' + p.height + 'cm</title></circle><text x="' + (x+9) + '" y="' + (y+4) + '">' + String(p.player||'?').slice(0,2).toUpperCase() + '</text></g>'; }).join('') + '<text class="axis-label" x="250" y="184">poids</text><text class="axis-label" x="4" y="24">taille</text></svg>' : '<div class="empty-mini">Pas assez de données.</div>');
+          const engagement = chartCard('Engagement', 'Messages et prénoms', '<div class="engagement-stack"><div class="progress-line"><div><span>Tickets avec message</span><b>' + withMsg + '/' + bets.length + '</b></div><i><em style="width:' + pct(withMsg, bets.length) + '%"></em></i></div><div class="progress-line"><div><span>Tickets avec prénom</span><b>' + withName + '/' + bets.length + '</b></div><i><em style="width:' + pct(withName, bets.length) + '%"></em></i></div><div class="progress-line"><div><span>Longueur moyenne message</span><b>' + avgNote + ' car.</b></div><i><em style="width:' + Math.min(100, avgNote) + '%"></em></i></div></div>');
+          const panel = document.createElement('section');
+          panel.className = 'data-lab-panel';
+          panel.innerHTML = '<div class="panel-title"><span>📊</span><div><h2>Data Lab</h2><p>Trust me I\'m data engineer : les paris vus comme un cockpit analytique.</p></div></div><div class="data-lab-grid">' + donut + dateBars + histo + cloud + scatter + engagement + '</div>';
+          const tickets = document.querySelector('.tickets-panel');
+          if (tickets) tickets.parentNode.insertBefore(panel, tickets);
+        }
+        async function load() {
+          try {
+            const res = await fetch(SUPABASE_URL + '/rest/v1/bets?select=*', { headers: { apikey: API_KEY, authorization: 'Bearer ' + API_KEY } });
+            const bets = await res.json();
+            renderDataLab(Array.isArray(bets) ? bets : []);
+          } catch (e) { console.warn('Data Lab KO', e); }
+        }
+        const timer = setInterval(() => {
+          if (document.querySelector('.tickets-panel')) { clearInterval(timer); load(); }
+        }, 250);
+        setInterval(load, 20000);
+      })();
+    </script>
   </body>
 </html>
