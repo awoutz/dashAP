@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Baby Bet Marine</title>
+    <style>
+      .automation-panel { display: none !important; }
+      .confidence-mini { display: none !important; }
+      .consensus-strip { grid-template-columns: 1.5fr repeat(5, 1fr) !important; }
+      @media (max-width: 1050px) { .consensus-strip { grid-template-columns: 1fr 1fr 1fr !important; } }
+      @media (max-width: 680px) { .consensus-strip { grid-template-columns: 1fr !important; } }
+    </style>
   </head>
   <body>
     <div id="root"></div>
