@@ -18,6 +18,7 @@
             "consensus consensus"
             "info participation"
             "badges messages"
+            "data data"
             "tickets tickets"
             "admin admin" !important;
           gap: 14px !important;
@@ -30,32 +31,22 @@
         .participation-zone { grid-area: participation !important; }
         .side-quests-panel { grid-area: badges !important; }
         .message-wall-panel { grid-area: messages !important; }
+        .data-lab-panel { grid-area: data !important; padding: 16px !important; border-radius: 26px !important; }
         .tickets-panel { grid-area: tickets !important; }
         .admin-panel { grid-area: admin !important; }
 
         .hero-panel:after { font-size: 92px !important; }
-        .hero-panel h1 {
-          max-width: 1050px !important;
-          font-size: clamp(42px, 5.6vw, 76px) !important;
-        }
+        .hero-panel h1 { max-width: 1050px !important; font-size: clamp(42px, 5.6vw, 76px) !important; }
         .hero-copy { margin-top: 10px !important; font-size: 16px !important; max-width: 760px !important; }
         .hero-actions { margin-top: 14px !important; }
         .cta-primary.huge { font-size: 16px !important; padding: 13px 16px !important; }
 
-        .consensus-strip {
-          grid-template-columns: 1.25fr repeat(5, minmax(0, 1fr)) !important;
-          gap: 8px !important;
-          padding: 12px !important;
-        }
+        .consensus-strip { grid-template-columns: 1.25fr repeat(5, minmax(0, 1fr)) !important; gap: 8px !important; padding: 12px !important; }
         .consensus-strip .metric { padding: 8px 10px !important; min-height: 58px !important; }
         .consensus-strip .metric strong { font-size: 16px !important; }
         .metric small { display:block; margin-top:3px; color:#94a3b8; font-size:11px; line-height:1.15; }
 
-        .info-panel, .participation-zone, .side-quests-panel, .message-wall-panel, .tickets-panel, .admin-panel {
-          padding: 16px !important;
-          border-radius: 26px !important;
-        }
-
+        .info-panel, .participation-zone, .side-quests-panel, .message-wall-panel, .tickets-panel, .admin-panel { padding: 16px !important; border-radius: 26px !important; }
         .panel-title { margin-bottom: 10px !important; }
         .panel-title > span { width: 36px !important; height: 36px !important; border-radius: 14px !important; }
         .panel-title h2 { font-size: 21px !important; }
@@ -67,45 +58,37 @@
         .info-card b { margin-top: 5px !important; font-size: 15px !important; }
         .info-card p { font-size: 12px !important; line-height: 1.28 !important; }
 
-        .participation-zone {
-          min-height: 100% !important;
-          grid-template-columns: 1.1fr .9fr !important;
-          gap: 12px !important;
-        }
+        .participation-zone { min-height: 100% !important; grid-template-columns: 1.1fr .9fr !important; gap: 12px !important; }
         .participation-copy p { font-size: 13px !important; line-height: 1.35 !important; }
         .participation-launch { min-height: 82px !important; border-radius: 22px !important; padding: 16px !important; }
         .participation-launch b { font-size: 21px !important; }
 
-        .quest-grid {
-          grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-          gap: 9px !important;
-        }
-        .quest-card {
-          min-height: 92px !important;
-          padding: 11px 12px !important;
-          border-radius: 18px !important;
-        }
+        .quest-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 9px !important; }
+        .quest-card { min-height: 92px !important; padding: 11px 12px !important; border-radius: 18px !important; }
         .quest-card span { font-size: 10px !important; letter-spacing: .07em !important; }
         .quest-card b { margin-top: 4px !important; font-size: 17px !important; line-height: 1.02 !important; }
         .quest-card p { margin-top: 6px !important; font-size: 12px !important; line-height: 1.28 !important; }
 
-        .message-wall {
-          max-height: 296px !important;
-          display: grid !important;
-          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-          gap: 9px !important;
-          overflow: auto !important;
-        }
-        .message-card {
-          padding: 11px !important;
-          border-radius: 18px !important;
-        }
+        .message-wall { max-height: 296px !important; display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 9px !important; overflow: auto !important; }
+        .message-card { padding: 11px !important; border-radius: 18px !important; }
         .message-card p { font-size: 12px !important; line-height: 1.28 !important; }
 
-        .tickets-wall {
-          grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-          gap: 10px !important;
-        }
+        .data-lab-grid { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; gap: 10px !important; }
+        .chart-card { min-height: 210px !important; padding: 12px !important; border-radius: 20px !important; }
+        .chart-head { margin-bottom: 8px !important; }
+        .chart-head b { font-size: 15px !important; }
+        .chart-head span { font-size: 11px !important; }
+        .donut-wrap { grid-template-columns: 118px 1fr !important; gap: 10px !important; }
+        .donut { width: 118px !important; height: 118px !important; }
+        .donut:after { inset: 26px !important; }
+        .donut b { font-size: 17px !important; }
+        .date-bars { height: 150px !important; }
+        .bar-track { height: 88px !important; }
+        .name-cloud { min-height: 138px !important; }
+        .histo-row { grid-template-columns: 62px 1fr 22px !important; }
+        .scatter { height: 160px !important; }
+
+        .tickets-wall { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 10px !important; }
         .ticket { padding: 12px !important; border-radius: 20px !important; }
         .ticket-top span { width: 34px !important; height: 34px !important; border-radius: 12px !important; }
         .ticket-top b { font-size: 16px !important; }
@@ -113,16 +96,11 @@
         .ticket-meta { margin-top: 8px !important; gap: 5px !important; }
         .ticket-meta span { padding: 5px 7px !important; font-size: 11px !important; }
         .ticket-badges { padding-top: 8px !important; }
-
         .admin-panel { padding-bottom: 18px !important; }
       }
 
-      @media (max-width: 1050px) {
-        .consensus-strip { grid-template-columns: 1fr 1fr 1fr !important; }
-      }
-      @media (max-width: 680px) {
-        .consensus-strip { grid-template-columns: 1fr !important; }
-      }
+      @media (max-width: 1050px) { .consensus-strip { grid-template-columns: 1fr 1fr 1fr !important; } }
+      @media (max-width: 680px) { .consensus-strip { grid-template-columns: 1fr !important; } }
     </style>
   </head>
   <body>
