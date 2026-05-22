@@ -3,102 +3,88 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Baby Bet Marine</title>
+    <title>GLPI Baby Bet Marine</title>
     <style>
-      .automation-panel,.confidence-mini{display:none!important}
-      .ticket-badges .auto-first-badge{background:linear-gradient(135deg,rgba(250,204,21,.34),rgba(251,113,133,.18))!important;border-color:rgba(250,204,21,.55)!important;color:#fff!important}
-      .ticket-badges .auto-last-badge{background:linear-gradient(135deg,rgba(96,165,250,.26),rgba(251,113,133,.16))!important;color:#fff!important}
-      .data-lab-panel{border:1px solid rgba(255,255,255,.12);border-radius:34px;background:radial-gradient(circle at 20% 0,rgba(96,165,250,.18),transparent 34%),radial-gradient(circle at 90% 15%,rgba(251,113,133,.18),transparent 32%),rgba(15,23,42,.7);box-shadow:0 30px 90px rgba(0,0,0,.28);backdrop-filter:blur(18px);padding:24px;overflow:hidden}
-      .data-lab-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}.chart-card{min-height:250px;border:1px solid rgba(255,255,255,.11);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06));padding:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}.chart-head{margin-bottom:15px}.chart-head b{display:block;font-size:18px;letter-spacing:-.035em}.chart-head span{display:block;margin-top:4px;color:#94a3b8;font-size:13px}.donut-wrap{display:grid;grid-template-columns:135px 1fr;gap:14px;align-items:center}.donut{width:135px;height:135px;border-radius:999px;display:grid;place-items:center;position:relative;box-shadow:0 22px 55px rgba(0,0,0,.28)}.donut:after{content:"";position:absolute;inset:30px;border-radius:999px;background:#111827}.donut b,.donut span{position:relative;z-index:1;text-align:center}.donut b{font-size:18px;font-weight:950;letter-spacing:-.05em}.donut span{margin-top:30px;color:#94a3b8;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.legend{display:grid;gap:10px}.legend-row{display:grid;grid-template-columns:14px 1fr auto;gap:8px;align-items:center;color:#cbd5e1}.legend-row i{width:12px;height:12px;border-radius:999px}.legend-row.pink i{background:#fb7185}.legend-row.blue i{background:#60a5fa}.legend-row.gold i{background:#facc15}.legend-row b{color:white}.date-bars{height:170px;display:grid;grid-template-columns:repeat(13,1fr);gap:5px;align-items:end}.date-bar{display:grid;gap:6px;text-align:center;align-items:end}.bar-track{height:104px;border-radius:999px;background:rgba(255,255,255,.08);display:flex;align-items:end;overflow:hidden}.bar-track span{display:block;width:100%;border-radius:999px;background:linear-gradient(180deg,#facc15,#fb7185);min-height:5px}.date-bar.term .bar-track{outline:1px solid rgba(251,113,133,.6)}.date-bar b{font-size:9px;color:#e2e8f0}.date-bar small{font-size:10px;color:#94a3b8}.histo{display:grid;gap:12px}.histo-row{display:grid;grid-template-columns:62px 1fr 24px;gap:8px;align-items:center}.histo-row span{font-size:12px;color:#cbd5e1}.histo-row div{height:14px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.histo-row i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#60a5fa,#fb7185)}.histo-row b{text-align:right}.name-cloud{display:flex;flex-wrap:wrap;gap:9px;align-content:center;min-height:150px}.name-cloud span{display:inline-flex;gap:7px;align-items:center;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);padding:8px 10px;font-size:calc(14px * var(--power));font-weight:950;box-shadow:0 12px 30px rgba(0,0,0,.14)}.name-cloud b{display:grid;place-items:center;width:20px;height:20px;border-radius:999px;background:#fff;color:#0f172a;font-size:11px}.scatter{width:100%;height:170px;overflow:visible}.scatter line{stroke:rgba(255,255,255,.28);stroke-width:2}.scatter .gridline{stroke:rgba(255,255,255,.08);stroke-width:1}.scatter .point{fill:#fb7185;stroke:white;stroke-width:2}.scatter .point.alt{fill:#60a5fa}.scatter text{fill:#e2e8f0;font-size:10px;font-weight:900}.scatter .axis-label{fill:#94a3b8;font-size:11px;text-transform:uppercase}.empty-mini{display:grid;place-items:center;min-height:130px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:#94a3b8;text-align:center;padding:16px}
-      @media (min-width:1051px){.app-shell{padding:12px 20px!important}.app-grid{max-width:1500px!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-areas:"hero hero" "consensus consensus" "info participation" "badges messages" "tickets tickets" "data data" "admin admin"!important;gap:14px!important;align-items:start!important}.hero-panel{grid-area:hero!important;min-height:230px!important;padding:20px!important}.consensus-strip{grid-area:consensus!important}.info-panel{grid-area:info!important}.participation-zone{grid-area:participation!important}.side-quests-panel{grid-area:badges!important}.message-wall-panel{grid-area:messages!important}.tickets-panel{grid-area:tickets!important}.data-lab-panel{grid-area:data!important;padding:16px!important;border-radius:26px!important}.admin-panel{grid-area:admin!important}.hero-panel:after{font-size:92px!important}.hero-panel h1{max-width:1050px!important;font-size:clamp(42px,5.6vw,76px)!important}.hero-copy{margin-top:10px!important;font-size:16px!important;max-width:760px!important}.hero-actions{margin-top:14px!important}.cta-primary.huge{font-size:16px!important;padding:13px 16px!important}.consensus-strip{grid-template-columns:1.25fr repeat(5,minmax(0,1fr))!important;gap:8px!important;padding:12px!important}.consensus-strip .metric{padding:8px 10px!important;min-height:58px!important}.consensus-strip .metric strong{font-size:16px!important}.metric small{display:block;margin-top:3px;color:#94a3b8;font-size:11px;line-height:1.15}.info-panel,.participation-zone,.side-quests-panel,.message-wall-panel,.tickets-panel,.admin-panel{padding:16px!important;border-radius:26px!important}.panel-title{margin-bottom:10px!important}.panel-title>span{width:36px!important;height:36px!important;border-radius:14px!important}.panel-title h2{font-size:21px!important}.panel-title p{font-size:13px!important;margin-top:3px!important}.info-cards{grid-template-columns:repeat(3,1fr)!important;gap:10px!important}.info-card{padding:12px!important;border-radius:20px!important}.info-card>span{font-size:22px!important}.info-card b{margin-top:5px!important;font-size:15px!important}.info-card p{font-size:12px!important;line-height:1.28!important}.participation-zone{min-height:100%!important;grid-template-columns:1.1fr .9fr!important;gap:12px!important}.participation-copy p{font-size:13px!important;line-height:1.35!important}.participation-launch{min-height:82px!important;border-radius:22px!important;padding:16px!important}.participation-launch b{font-size:21px!important}.quest-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}.quest-card{min-height:92px!important;padding:11px 12px!important;border-radius:18px!important}.quest-card span{font-size:10px!important;letter-spacing:.07em!important}.quest-card b{margin-top:4px!important;font-size:17px!important;line-height:1.02!important}.quest-card p{margin-top:6px!important;font-size:12px!important;line-height:1.28!important}.message-wall{max-height:296px!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;overflow:auto!important}.message-card{padding:11px!important;border-radius:18px!important}.message-card p{font-size:12px!important;line-height:1.28!important}.data-lab-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}.chart-card{min-height:206px!important;padding:12px!important;border-radius:20px!important}.chart-head{margin-bottom:8px!important}.chart-head b{font-size:15px!important}.chart-head span{font-size:11px!important}.donut-wrap{grid-template-columns:108px 1fr!important;gap:10px!important}.donut{width:108px!important;height:108px!important}.donut:after{inset:24px!important}.donut b{font-size:15px!important}.date-bars{height:140px!important}.bar-track{height:82px!important}.name-cloud{min-height:128px!important}.histo-row{grid-template-columns:54px 1fr 20px!important}.scatter{height:150px!important}.tickets-wall{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}.ticket{padding:12px!important;border-radius:20px!important}.ticket-top span{width:34px!important;height:34px!important;border-radius:12px!important}.ticket-top b{font-size:16px!important}.ticket-prediction{margin-top:8px!important;font-size:14px!important}.ticket-meta{margin-top:8px!important;gap:5px!important}.ticket-meta span{padding:5px 7px!important;font-size:11px!important}.ticket-badges{padding-top:8px!important}.admin-panel{padding-bottom:18px!important}}
-      @media (max-width:1050px){.consensus-strip{grid-template-columns:1fr 1fr 1fr!important}.data-lab-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-      @media (max-width:680px){.consensus-strip{grid-template-columns:1fr!important}.data-lab-grid{grid-template-columns:1fr}}
+      :root{
+        --glpi-blue:#1f5d8f;
+        --glpi-blue-dark:#17466d;
+        --glpi-cyan:#2b9dcc;
+        --glpi-bg:#eef2f5;
+        --glpi-panel:#ffffff;
+        --glpi-border:#cfd8df;
+        --glpi-text:#263238;
+        --glpi-muted:#6b7c88;
+        --glpi-green:#4caf50;
+        --glpi-orange:#f39c12;
+        --glpi-red:#d9534f;
+        --glpi-purple:#7952b3;
+      }
+
+      *{box-sizing:border-box}
+      body{background:var(--glpi-bg)!important;color:var(--glpi-text)!important;font-family:Arial,Helvetica,sans-serif!important}
+
+      .glpi-topbar{position:sticky;top:0;z-index:80;height:46px;background:linear-gradient(#2f6f9f,#1d557f);border-bottom:1px solid #123c5a;color:#fff;display:flex;align-items:center;padding:0 14px;box-shadow:0 2px 5px rgba(0,0,0,.18)}
+      .glpi-brand{font-weight:700;font-size:20px;letter-spacing:-.04em;margin-right:18px}.glpi-brand span{font-weight:400;color:#b9e5ff}.glpi-tabs{display:flex;gap:2px;height:100%;align-items:end}.glpi-tabs a{color:#e8f5fc;text-decoration:none;font-size:13px;padding:13px 13px 12px;border-radius:6px 6px 0 0}.glpi-tabs a.active,.glpi-tabs a:hover{background:rgba(255,255,255,.16)}.glpi-user{margin-left:auto;font-size:12px;color:#d8edf8;display:flex;gap:12px;align-items:center}.glpi-user b{color:#fff}
+      .glpi-sidebar{position:fixed;left:0;top:46px;bottom:0;width:208px;background:#24313b;color:#d4dde3;border-right:1px solid #17242c;z-index:70;padding:12px 10px;overflow:auto}.glpi-side-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8fa2b0;margin:8px 8px}.glpi-side-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:4px;color:#e7edf1;font-size:13px;margin:2px 0}.glpi-side-item.active{background:#1f5d8f;color:#fff}.glpi-side-item:hover{background:#344653}.glpi-breadcrumb{position:relative;margin-left:208px;background:#fff;border-bottom:1px solid var(--glpi-border);padding:8px 18px;color:#60727f;font-size:12px;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+
+      .app-shell{padding:14px 18px 24px 226px!important;background:var(--glpi-bg)!important;min-height:calc(100vh - 46px)!important}.app-grid{max-width:1600px!important;margin:0!important;display:grid!important;grid-template-columns:1.15fr .85fr!important;gap:12px!important;align-items:start!important}.aurora{display:none!important}
+
+      .hero-panel,.info-panel,.participation-zone,.side-quests-panel,.tickets-panel,.message-wall-panel,.admin-panel,.consensus-strip,.data-lab-panel{background:var(--glpi-panel)!important;border:1px solid var(--glpi-border)!important;border-radius:3px!important;box-shadow:0 1px 2px rgba(0,0,0,.08)!important;backdrop-filter:none!important;color:var(--glpi-text)!important;padding:12px!important;overflow:hidden!important}.hero-panel{grid-column:1/-1!important;min-height:134px!important;align-content:start!important;background:#fff!important;position:relative!important}.hero-panel:after{content:'Ticket #2026-NAISS-MARINE'!important;right:16px!important;top:14px!important;font-size:22px!important;color:#d9e1e7!important;letter-spacing:0!important;font-weight:700!important}.hero-panel:before{content:'Assistance > Tickets > Naissance Marine';display:block;background:#f6f8fa;border-bottom:1px solid var(--glpi-border);margin:-12px -12px 12px;padding:8px 12px;color:#5d6f7b;font-size:12px}.brand-pill{background:#e8f2fa!important;border:1px solid #b9d7ea!important;color:#1f5d8f!important;border-radius:3px!important;font-size:12px!important;padding:5px 8px!important;font-weight:700!important}.hero-panel h1{font-size:30px!important;line-height:1.1!important;letter-spacing:-.03em!important;margin:8px 0 0!important;color:#263238!important}.hero-copy{font-size:14px!important;color:#53656f!important;margin-top:8px!important;max-width:760px!important}.hero-actions{margin-top:12px!important}.cta-primary,.participation-launch{background:linear-gradient(#2b8fc0,#1f6f99)!important;color:#fff!important;border:1px solid #155b80!important;border-radius:3px!important;box-shadow:none!important}.cta-secondary{background:#f7f9fb!important;color:#1f5d8f!important;border:1px solid #b7ccd9!important;border-radius:3px!important}.cta-primary.huge{font-size:13px!important;padding:9px 12px!important}
+
+      .consensus-strip{grid-column:1/-1!important;display:grid!important;grid-template-columns:1.4fr repeat(5,1fr)!important;gap:8px!important;background:#f9fbfc!important}.strip-title{gap:8px!important}.strip-title>span,.panel-title>span{background:#e6eef4!important;color:#1f5d8f!important;border:1px solid #c8d8e4!important;border-radius:3px!important;width:32px!important;height:32px!important;font-size:17px!important}.strip-title b,.panel-title h2{color:#263238!important;font-size:16px!important;letter-spacing:0!important}.strip-title small,.panel-title p{color:#6b7c88!important;font-size:12px!important}.metric{background:#fff!important;border:1px solid #d7e0e6!important;border-radius:3px!important;padding:8px!important}.metric span{color:#60727f!important;font-size:10px!important}.metric strong{color:#263238!important;font-size:17px!important}.metric small{display:block;color:#78909c;font-size:11px;margin-top:3px}
+
+      .info-panel{grid-column:1/2!important}.participation-zone{grid-column:2/3!important;display:grid!important;grid-template-columns:1fr!important;gap:10px!important}.info-cards{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:8px!important}.info-card{background:#f8fafb!important;border:1px solid #d9e2e8!important;border-radius:3px!important;padding:10px!important}.info-card>span{font-size:20px!important}.info-card b{color:#263238!important;font-size:13px!important;margin-top:6px!important}.info-card p,.participation-copy p{font-size:12px!important;color:#60727f!important;line-height:1.35!important}.participation-launch{min-height:54px!important;display:flex!important;justify-content:space-between!important;text-align:left!important;padding:10px 12px!important}.participation-launch b{font-size:18px!important}.participation-launch span{color:#d8edf8!important;font-size:12px!important}
+
+      .side-quests-panel{grid-column:1/2!important}.message-wall-panel{grid-column:2/3!important}.quest-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.quest-card,.message-card{background:#fff!important;border:1px solid #d6e0e6!important;border-left:4px solid var(--glpi-blue)!important;border-radius:3px!important;padding:8px 10px!important;min-height:72px!important}.quest-card:nth-child(3n){border-left-color:var(--glpi-orange)!important}.quest-card:nth-child(4n){border-left-color:var(--glpi-green)!important}.quest-card span{color:#60727f!important;font-size:10px!important}.quest-card b{color:#263238!important;font-size:16px!important;letter-spacing:0!important}.quest-card p,.message-card p{font-size:12px!important;color:#60727f!important;line-height:1.28!important}.message-wall{display:grid!important;grid-template-columns:1fr!important;gap:8px!important;max-height:330px!important;overflow:auto!important}.message-card b{color:#1f5d8f!important}.empty-state{background:#fff!important;border:1px dashed #b9c8d2!important;border-radius:3px!important;color:#78909c!important}
+
+      .tickets-panel{grid-column:1/-1!important}.tickets-wall{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}.ticket{position:relative;background:#fff!important;border:1px solid #ccd8df!important;border-left:5px solid var(--glpi-blue)!important;border-radius:3px!important;box-shadow:0 1px 2px rgba(0,0,0,.06)!important;color:#263238!important;text-align:left!important;padding:10px!important}.ticket:nth-child(2n){border-left-color:var(--glpi-orange)!important}.ticket:nth-child(3n){border-left-color:var(--glpi-green)!important}.ticket:before{content:'Incident';position:absolute;right:8px;top:8px;background:#eef5fa;border:1px solid #c5d8e6;color:#1f5d8f;font-size:10px;font-weight:700;padding:3px 6px;border-radius:3px}.ticket-top{gap:8px!important}.ticket-top span{width:30px!important;height:30px!important;border-radius:3px!important;background:#1f5d8f!important;color:#fff!important}.ticket-top b{font-size:15px!important;color:#263238!important;padding-right:66px}.ticket-prediction{font-size:13px!important;color:#40545f!important;margin-top:8px!important}.ticket-meta{gap:5px!important;margin-top:8px!important}.ticket-meta span{background:#eef3f6!important;color:#40545f!important;border:1px solid #d2dfe7!important;border-radius:3px!important;padding:4px 6px!important;font-size:11px!important}.ticket-badges{border-top:1px solid #e0e7ec!important}.ticket-badges span{background:#f5f7f9!important;color:#40545f!important;border:1px solid #d6e0e6!important;box-shadow:none!important}.ticket-badges .auto-first-badge{background:#fff4cc!important;border-color:#f0ca51!important;color:#5f4800!important}.ticket-badges .auto-last-badge{background:#e8f4ff!important;color:#1f5d8f!important}
+
+      .data-lab-panel{grid-column:1/-1!important;background:#fff!important}.data-lab-panel .panel-title:after{content:'Graphiques générés depuis la table public.bets';margin-left:auto;color:#78909c;font-size:11px}.data-lab-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important}.chart-card{background:#f8fafb!important;border:1px solid #d7e1e8!important;border-radius:3px!important;box-shadow:none!important;min-height:190px!important;padding:10px!important}.chart-head b{color:#263238!important;font-size:14px!important}.chart-head span{color:#78909c!important;font-size:11px!important}.donut:after{background:#f8fafb!important}.donut b{color:#263238!important}.histo-row span,.date-bar b,.date-bar small,.legend-row,.scatter text{color:#40545f!important;fill:#40545f!important}.bar-track,.histo-row div{background:#dfe8ee!important}.empty-mini{background:#fff!important;color:#78909c!important;border-color:#cbd8e0!important;border-radius:3px!important}
+
+      .admin-panel{grid-column:1/-1!important;background:#fff!important;border-top:4px solid #263238!important}.admin-login{display:flex!important;gap:8px!important}.result-fields{display:grid!important;grid-template-columns:repeat(5,1fr)!important;gap:8px!important}.admin-actions button,.admin-login button{background:#1f5d8f!important;color:#fff!important;border:1px solid #17466d!important;border-radius:3px!important}.locked{background:#f8fafb!important;border:1px dashed #b9c8d2!important;border-radius:3px!important;color:#60727f!important}.podium-card{border-radius:3px!important;background:#f8fafb!important;border:1px solid #d7e1e8!important;color:#263238!important}.podium-card strong,.podium-card b{color:#263238!important}
+
+      input,select,textarea{border:1px solid #b7c7d1!important;border-radius:3px!important;background:#fff!important;color:#263238!important;padding:8px 9px!important}.choice{border-radius:3px!important;background:#f8fafb!important;color:#263238!important;border:1px solid #cbd8e0!important}.choice.active{background:#1f5d8f!important;color:#fff!important}.progress-steps button{border-radius:3px!important}.progress-steps button.active{background:#1f5d8f!important;color:#fff!important}.wizard-card,.modal-card,.participation-modal{border-radius:3px!important;background:#fff!important;color:#263238!important;border:1px solid #cbd8e0!important}.participation-backdrop,.modal-backdrop{background:rgba(38,50,56,.7)!important}.participation-aside{background:#f2f6f9!important;border-right:1px solid #cbd8e0!important}.participation-aside h2,.modal-card h2{color:#263238!important}.participation-aside p,.modal-card p{color:#60727f!important}.gift-card{background:#fff!important;border:1px solid #d7e1e8!important;border-radius:3px!important}.modal-close{background:#e5edf2!important;color:#263238!important}.ticket-big-avatar{border-radius:3px!important;background:#1f5d8f!important;color:#fff!important}.danger{border-radius:3px!important;background:#d9534f!important}.toast{border-radius:3px!important;background:#263238!important;color:#fff!important}
+
+      .glpi-status-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:0 0 12px 0}.glpi-kpi{background:#fff;border:1px solid var(--glpi-border);border-left:4px solid var(--glpi-blue);padding:9px}.glpi-kpi span{display:block;color:#60727f;font-size:10px;text-transform:uppercase;font-weight:700}.glpi-kpi b{display:block;color:#263238;font-size:18px;margin-top:3px}.glpi-kpi:nth-child(2){border-left-color:var(--glpi-orange)}.glpi-kpi:nth-child(3){border-left-color:var(--glpi-green)}.glpi-kpi:nth-child(4){border-left-color:var(--glpi-purple)}.glpi-kpi:nth-child(5){border-left-color:var(--glpi-red)}
+
+      @media(max-width:1050px){.glpi-sidebar{display:none}.glpi-breadcrumb{margin-left:0}.app-shell{padding:12px!important}.app-grid{grid-template-columns:1fr!important}.info-panel,.participation-zone,.side-quests-panel,.message-wall-panel,.tickets-panel,.admin-panel,.data-lab-panel{grid-column:1/-1!important}.tickets-wall,.data-lab-grid{grid-template-columns:repeat(2,1fr)!important}.glpi-tabs{display:none}.glpi-status-row{grid-template-columns:repeat(2,1fr)}}
+      @media(max-width:680px){.tickets-wall,.data-lab-grid,.quest-grid,.result-fields,.glpi-status-row{grid-template-columns:1fr!important}.glpi-user{display:none}.hero-panel h1{font-size:24px!important}}
     </style>
   </head>
   <body>
+    <div class="glpi-topbar">
+      <div class="glpi-brand">GLPI <span>Baby Bet</span></div>
+      <nav class="glpi-tabs"><a class="active">Parc</a><a>Assistance</a><a>Gestion</a><a>Outils</a><a>Administration</a><a>Configuration</a></nav>
+      <div class="glpi-user">Root entity &gt; AP-HM <b>Jean V</b></div>
+    </div>
+    <aside class="glpi-sidebar">
+      <div class="glpi-side-title">Assistance</div>
+      <div class="glpi-side-item active">🎟️ Tickets naissance</div>
+      <div class="glpi-side-item">📊 Tableau de bord</div>
+      <div class="glpi-side-item">🏅 Badges collectifs</div>
+      <div class="glpi-side-item">💌 Messages</div>
+      <div class="glpi-side-title">Administration</div>
+      <div class="glpi-side-item">🔐 Résultat final</div>
+      <div class="glpi-side-item">🧾 Export</div>
+      <div class="glpi-side-item">⚙️ Paramètres</div>
+    </aside>
+    <div class="glpi-breadcrumb">Accueil &gt; Assistance &gt; Tickets &gt; Baby Bet Marine &gt; Suivi pronostics</div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script>
       (function(){
-        const SUPABASE_URL='https://btxmplbdeovyxytxdkzx.supabase.co';
-        const API_KEY='sb_publishable_3x3PgMOTCmGx8HySJ-zDmw_kfdbfFpg';
-        const TERM='2026-06-25';
-        const fmtDate=v=>v?new Date(v+'T00:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}):'—';
-        const fmtDateTime=v=>v?new Date(v).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
-        const grams=v=>{const n=Number(v);if(!Number.isFinite(n))return null;return n<=20?Math.round(n*1000):Math.round(n)};
-        const kg=v=>{const g=grams(v);return g==null?'—':(Math.round(g/100)/10).toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})+' kg'};
-        const countBy=arr=>Object.entries(arr.filter(Boolean).reduce((a,v)=>{a[v]=(a[v]||0)+1;return a},{})).map(([label,count])=>({label,count})).sort((a,b)=>b.count-a.count||String(a.label).localeCompare(String(b.label)));
-        const bucket=w=>{const g=grams(w);if(g==null)return null;if(g<2800)return '<2,8';if(g<3200)return '2,8-3,2';if(g<3600)return '3,2-3,6';if(g<4000)return '3,6-4';return '4+'};
-        const range=()=>{const base=new Date(TERM+'T00:00:00');return Array.from({length:13},(_,i)=>{const d=new Date(base);d.setDate(base.getDate()-6+i);return d.toISOString().slice(0,10)})};
-        const pct=(n,d)=>Math.round((n/Math.max(1,d))*100);
-        const card=(t,s,b)=>'<article class="chart-card"><div class="chart-head"><b>'+t+'</b><span>'+s+'</span></div>'+b+'</article>';
-        const q=(t,v,d)=>'<article class="quest-card"><span>'+t+'</span><b>'+v+'</b><p>'+d+'</p></article>';
-        function renderExtremeBadges(bets){
-          const grid=document.querySelector('.side-quests-panel .quest-grid');
-          if(!grid||!bets.length)return;
-          const byCreated=[...bets].filter(b=>b.created_at).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
-          const first=byCreated[0]||bets[0];
-          const last=byCreated[byCreated.length-1]||bets[bets.length-1];
-          const early=[...bets].sort((a,b)=>String(a.birth_date).localeCompare(String(b.birth_date)))[0];
-          const late=[...bets].sort((a,b)=>String(b.birth_date).localeCompare(String(a.birth_date)))[0];
-          const small=[...bets].filter(b=>grams(b.weight)!=null).sort((a,b)=>grams(a.weight)-grams(b.weight))[0];
-          const big=[...bets].filter(b=>grams(b.weight)!=null).sort((a,b)=>grams(b.weight)-grams(a.weight))[0];
-          const shorty=[...bets].filter(b=>Number(b.height)).sort((a,b)=>Number(a.height)-Number(b.height))[0];
-          const tall=[...bets].filter(b=>Number(b.height)).sort((a,b)=>Number(b.height)-Number(a.height))[0];
-          grid.innerHTML=
-            q('À jamais le premier',first?.player||'—',first?'Premier pari enregistré · '+fmtDateTime(first.created_at):'Aucun ticket')+
-            q('Dernier arrivé',last?.player||'—',last?'Dernier pari enregistré · '+fmtDateTime(last.created_at):'Aucun ticket')+
-            q('Plus tôt',early?fmtDate(early.birth_date):'—',early?early.player+' tente le départ express':'Aucun ticket')+
-            q('Plus tard',late?fmtDate(late.birth_date):'—',late?late.player+' mise sur le bébé chill':'Aucun ticket')+
-            q('Plus petit poids',small?kg(small.weight):'—',small?small.player+' joue la version compacte':'Aucun ticket')+
-            q('Plus gros poids',big?kg(big.weight):'—',big?big.player+' tente le beau bébé':'Aucun ticket')+
-            q('Plus petite taille',shorty?shorty.height+' cm':'—',shorty?shorty.player+' voit petit mais précis':'Aucun ticket')+
-            q('Plus grand modèle',tall?tall.height+' cm':'—',tall?tall.player+' a misé sur la taille':'Aucun ticket');
-          document.querySelectorAll('.auto-first-badge,.auto-last-badge').forEach(n=>n.remove());
-          document.querySelectorAll('.ticket').forEach(ticket=>{
-            const text=ticket.textContent||'';
-            const badges=ticket.querySelector('.ticket-badges');
-            if(!badges)return;
-            if(first&&text.includes(first.player)){const s=document.createElement('span');s.className='auto-first-badge';s.textContent='🥇 À jamais le premier';badges.prepend(s)}
-            if(last&&first&&last.id!==first.id&&text.includes(last.player)){const s=document.createElement('span');s.className='auto-last-badge';s.textContent='🆕 Dernier arrivé';badges.append(s)}
-          });
+        function insertStatus(){
+          const hero=document.querySelector('.hero-panel');
+          if(!hero||document.querySelector('.glpi-status-row'))return;
+          const tickets=document.querySelectorAll('.ticket').length;
+          const messages=document.querySelectorAll('.message-card').length;
+          const row=document.createElement('div');
+          row.className='glpi-status-row';
+          row.innerHTML='<div class="glpi-kpi"><span>Statut</span><b>En cours</b></div><div class="glpi-kpi"><span>Priorité</span><b>Festive</b></div><div class="glpi-kpi"><span>Tickets</span><b>'+tickets+'</b></div><div class="glpi-kpi"><span>Messages</span><b>'+messages+'</b></div><div class="glpi-kpi"><span>Échéance</span><b>25/06</b></div>';
+          hero.appendChild(row);
         }
-        function renderDataLab(bets){
-          document.querySelector('.data-lab-panel')?.remove();
-          const total=Math.max(1,bets.length);
-          const sex=countBy(bets.map(b=>b.sex));
-          const girl=sex.find(x=>x.label==='Fille')?.count||0,boy=sex.find(x=>x.label==='Garçon')?.count||0,surprise=Math.max(0,bets.length-girl-boy);
-          const gp=pct(girl,total),bp=pct(boy,total);
-          const dates=range().map(date=>({date,count:bets.filter(b=>b.birth_date===date).length}));
-          const maxDate=Math.max(1,...dates.map(d=>d.count));
-          const weights=countBy(bets.map(b=>bucket(b.weight)).filter(Boolean));
-          const maxWeight=Math.max(1,...weights.map(w=>w.count));
-          const names=countBy(bets.map(b=>b.first_name).filter(Boolean)).slice(0,10);
-          const maxName=Math.max(1,...names.map(n=>n.count));
-          const points=bets.map(b=>({player:b.player,weight:grams(b.weight),height:Number(b.height),note:b.note})).filter(p=>Number.isFinite(p.weight)&&Number.isFinite(p.height));
-          const minW=Math.min(2600,...points.map(p=>p.weight)),maxW=Math.max(4300,...points.map(p=>p.weight)),minH=Math.min(45,...points.map(p=>p.height)),maxH=Math.max(55,...points.map(p=>p.height));
-          const donut=card('Répartition sexe','Donut compact du bureau','<div class="donut-wrap"><div class="donut" style="background:conic-gradient(#fb7185 0 '+gp+'%, #60a5fa '+gp+'% '+(gp+bp)+'%, #facc15 '+(gp+bp)+'% 100%)"><b>'+(sex[0]?.label||'—')+'</b><span>majoritaire</span></div><div class="legend"><div class="legend-row pink"><i></i><span>Fille</span><b>'+girl+'</b></div><div class="legend-row blue"><i></i><span>Garçon</span><b>'+boy+'</b></div><div class="legend-row gold"><i></i><span>Surprise</span><b>'+surprise+'</b></div></div></div>');
-          const dateBars=card('Heatmap dates','Jours les plus chargés','<div class="date-bars">'+dates.map(d=>'<div class="date-bar '+(d.date===TERM?'term':'')+'"><div class="bar-track"><span style="height:'+(10+d.count/maxDate*90)+'%"></span></div><b>'+fmtDate(d.date)+'</b><small>'+d.count+'</small></div>').join('')+'</div>');
-          const histo=card('Histogramme poids','Tranches en kg','<div class="histo">'+(weights.length?weights.map(w=>'<div class="histo-row"><span>'+w.label+'</span><div><i style="width:'+(w.count/maxWeight*100)+'%"></i></div><b>'+w.count+'</b></div>').join(''):'<div class="empty-mini">Pas assez de données.</div>')+'</div>');
-          const cloud=card('Nuage prénoms','Fréquence des propositions','<div class="name-cloud">'+(names.length?names.map(n=>'<span style="--power:'+(0.75+n.count/maxName*0.55)+'">'+n.label+'<b>'+n.count+'</b></span>').join(''):'<div class="empty-mini">Pas encore de prénoms.</div>')+'</div>');
-          const scatter=card('Poids × taille','Scatterplot des tickets',points.length?'<svg class="scatter" viewBox="0 0 360 170"><line x1="34" y1="142" x2="336" y2="142"></line><line x1="34" y1="18" x2="34" y2="142"></line><line class="gridline" x1="34" x2="336" y1="50" y2="50"></line><line class="gridline" x1="34" x2="336" y1="86" y2="86"></line><line class="gridline" x1="34" x2="336" y1="118" y2="118"></line>'+points.map((p,i)=>{const x=42+((p.weight-minW)/Math.max(1,maxW-minW))*286;const y=134-((p.height-minH)/Math.max(1,maxH-minH))*110;return '<g><circle cx="'+x+'" cy="'+y+'" r="'+(p.note?8:6)+'" class="point '+(i%2?'alt':'')+'"><title>'+p.player+' · '+(Math.round(p.weight/100)/10)+'kg · '+p.height+'cm</title></circle><text x="'+(x+9)+'" y="'+(y+4)+'">'+String(p.player||'?').slice(0,2).toUpperCase()+'</text></g>'}).join('')+'<text class="axis-label" x="250" y="164">poids</text><text class="axis-label" x="4" y="24">taille</text></svg>':'<div class="empty-mini">Pas assez de données.</div>');
-          const panel=document.createElement('section');
-          panel.className='data-lab-panel';
-          panel.innerHTML='<div class="panel-title"><span>📊</span><div><h2>Data Lab</h2><p>Trust me I\'m data engineer : les paris vus comme un cockpit analytique.</p></div></div><div class="data-lab-grid">'+donut+dateBars+histo+cloud+scatter+'</div>';
-          const admin=document.querySelector('.admin-panel');
-          if(admin)admin.parentNode.insertBefore(panel,admin);
-        }
-        async function load(){
-          try{
-            const res=await fetch(SUPABASE_URL+'/rest/v1/bets?select=*&order=created_at.asc',{headers:{apikey:API_KEY,authorization:'Bearer '+API_KEY}});
-            const bets=await res.json();
-            const clean=Array.isArray(bets)?bets:[];
-            renderExtremeBadges(clean);
-            renderDataLab(clean);
-          }catch(e){console.warn('Data Lab KO',e)}
-        }
-        const timer=setInterval(()=>{if(document.querySelector('.tickets-panel')&&document.querySelector('.side-quests-panel')){clearInterval(timer);load()}},250);
-        setInterval(load,20000);
+        const t=setInterval(()=>{insertStatus(); if(document.querySelector('.tickets-panel')) clearInterval(t);},250);
+        setInterval(insertStatus,5000);
       })();
     </script>
   </body>
