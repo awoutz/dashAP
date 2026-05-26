@@ -4,25 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GLPI Baby Bet Marine</title>
-    <style>
-      .side-quests-panel .quest-grid{gap:8px!important;padding:10px!important}
-      .quest-card{min-height:86px!important;padding:9px 10px 9px 56px!important;border-radius:6px!important}
-      .quest-card:before{left:10px!important;top:12px!important;width:32px!important;height:32px!important;border-radius:7px!important}
-      .quest-card:after{left:17px!important;top:18px!important;font-size:16px!important}
-      .quest-card span{font-size:9px!important;line-height:1!important;letter-spacing:.06em!important}
-      .quest-card b{font-size:15px!important;line-height:1.05!important;margin-top:3px!important}
-      .quest-card p{font-size:11px!important;line-height:1.18!important;margin-top:4px!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
-      .tickets-wall{align-items:stretch!important}
-      .ticket{min-height:168px!important;padding:10px!important}
-      .ticket-prediction{margin-top:6px!important;line-height:1.25!important}
-      .ticket-facts{margin-top:5px!important}
-      .ticket-note{margin-top:7px!important;padding:7px 8px!important;min-height:0!important}
-      .ticket-note span{line-height:1!important;margin:0!important}
-      .ticket-note p{margin:3px 0 0!important;line-height:1.18!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
-      .ticket-badges{margin-top:7px!important;gap:4px!important}
-      .ticket-badges span{min-height:22px!important;padding:3px 5px!important;font-size:10px!important;line-height:1.1!important}
-      @media (max-width:1350px){.quest-card{min-height:82px!important}.ticket{min-height:160px!important}}
-    </style>
   </head>
   <body>
     <aside class="glpi-sidebar">
@@ -63,5 +44,25 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script type="module" src="/src/glpi-dom-enhance.js"></script>
+    <style id="final-density-fix">
+      .side-quests-panel .quest-grid{gap:8px!important;padding:10px!important;align-items:start!important}
+      .side-quests-panel .quest-card{min-height:0!important;height:auto!important;padding:8px 10px 8px 54px!important;border-radius:6px!important}
+      .side-quests-panel .quest-card:before{left:10px!important;top:10px!important;width:30px!important;height:30px!important;border-radius:7px!important}
+      .side-quests-panel .quest-card:after{left:17px!important;top:16px!important;font-size:15px!important}
+      .side-quests-panel .quest-card span{font-size:9px!important;line-height:1!important;letter-spacing:.06em!important;margin:0!important}
+      .side-quests-panel .quest-card b{font-size:15px!important;line-height:1.02!important;margin:3px 0 0!important}
+      .side-quests-panel .quest-card p{font-size:11px!important;line-height:1.12!important;margin:4px 0 0!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+      .tickets-wall{align-items:start!important}
+      .tickets-panel .ticket{min-height:0!important;height:auto!important;padding:9px 10px!important;display:block!important}
+      .tickets-panel .ticket-top{margin:0!important}
+      .tickets-panel .ticket-prediction{margin:6px 0 0!important;line-height:1.2!important}
+      .tickets-panel .ticket-facts{margin:5px 0 0!important}
+      .tickets-panel .ticket-note{margin:6px 0 0!important;padding:6px 8px!important;min-height:0!important}
+      .tickets-panel .ticket-note span{line-height:1!important;margin:0!important}
+      .tickets-panel .ticket-note p{margin:3px 0 0!important;line-height:1.15!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+      .tickets-panel .ticket-badges{margin:6px 0 0!important;padding-top:6px!important;gap:4px!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+      .tickets-panel .ticket-badges span{min-height:21px!important;padding:3px 5px!important;font-size:10px!important;line-height:1.05!important}
+      @media(max-width:1350px){.side-quests-panel .quest-card{padding-top:8px!important;padding-bottom:8px!important}.tickets-panel .ticket{padding:9px!important}}
+    </style>
   </body>
 </html>
