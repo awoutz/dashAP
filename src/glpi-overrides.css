@@ -9,11 +9,134 @@
   --glpi-green: #58b368;
   --glpi-purple: #8b70c9;
   --glpi-grey-card: #f6f8fb;
+  --g-sidebar: #263b5f;
+  --g-sidebar-active: #213451;
+  --g-yellow: #ffc84d;
+  --g-bg: #f3f5f8;
+  --g-line: #dfe5ec;
 }
 
-.glpi-topbar { height: 48px !important; border-bottom: 0 !important; box-shadow: none !important; }
-.glpi-filterbar { top: 48px !important; min-height: 44px !important; padding: 7px 18px !important; border-top: 1px solid #eef2f6 !important; box-shadow: 0 1px 3px rgba(15,23,42,.06) !important; }
-.app-shell { padding-top: 104px !important; }
+html, body, #root { min-height: 100%; }
+body { margin: 0 !important; background: var(--g-bg) !important; color: #2d3748 !important; font-family: Inter, Arial, Helvetica, sans-serif !important; font-size: 13px !important; }
+
+.glpi-sidebar {
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 236px;
+  background: var(--g-sidebar);
+  color: #d9e2ef;
+  box-shadow: 2px 0 8px rgba(15,23,42,.18);
+  overflow: auto;
+}
+.glpi-logo {
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: -.1em;
+  color: #fff;
+}
+.glpi-goto {
+  height: 30px;
+  margin: 0 22px 16px;
+  border: 1px solid rgba(255,255,255,.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  background: rgba(15,23,42,.15);
+}
+.glpi-menu-section {
+  margin: 10px 0 2px;
+  padding: 8px 22px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.glpi-menu-section.active { color: var(--g-yellow); }
+.glpi-menu-item {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 22px 0 36px;
+  color: #e5edf7;
+  font-size: 13px;
+  text-decoration: none;
+  border-left: 4px solid transparent;
+}
+.glpi-menu-item.active {
+  background: var(--g-sidebar-active);
+  border-left-color: var(--g-yellow);
+  color: #fff;
+  font-weight: 800;
+}
+.glpi-collapse {
+  position: absolute;
+  left: 22px;
+  bottom: 18px;
+  font-size: 12px;
+  color: #e5edf7;
+  font-weight: 700;
+}
+
+.glpi-topbar {
+  position: fixed;
+  z-index: 90;
+  top: 0;
+  left: 236px;
+  right: 0;
+  height: 48px !important;
+  background: #fff;
+  border-bottom: 0 !important;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  box-shadow: none !important;
+}
+.glpi-breadcrumb { display: flex; align-items: center; gap: 8px; color: #657487; font-size: 13px; white-space: nowrap; }
+.glpi-breadcrumb b { color: #1f2937; }
+.glpi-actions { display: flex; gap: 4px; margin-left: 16px; }
+.glpi-actions button { height: 28px; border: 1px solid var(--g-line); background: #fff; color: #516174; font-weight: 700; font-size: 12px; padding: 0 9px; border-radius: 2px; }
+.glpi-search { margin-left: auto; display: flex; height: 32px; border: 1px solid var(--g-line); background: #fff; }
+.glpi-search input { width: 210px; border: 0 !important; outline: 0; background: #fff !important; padding: 0 10px !important; color: #667085 !important; }
+.glpi-search button { width: 42px; border: 0; border-left: 1px solid var(--g-line); background: #fff; color: #53687c; }
+.glpi-user { display: flex; align-items: center; gap: 10px; margin-left: 18px; color: #344054; font-size: 13px; }
+.glpi-user small { display: block; color: #7a8796; font-size: 11px; }
+.glpi-avatar { width: 34px; height: 34px; border-radius: 3px; background: linear-gradient(135deg,#d9e2ec,#fff); border: 1px solid var(--g-line); display: grid; place-items: center; }
+
+.glpi-filterbar {
+  position: fixed;
+  z-index: 85;
+  top: 48px !important;
+  left: 236px;
+  right: 0;
+  min-height: 44px !important;
+  background: #f3f6fa;
+  border-bottom: 1px solid #cbd5e1;
+  border-top: 1px solid #eef2f6 !important;
+  padding: 7px 18px !important;
+  box-shadow: 0 1px 3px rgba(15,23,42,.06) !important;
+}
+.glpi-filter-row { display: flex; align-items: center; gap: 6px; }
+.glpi-filter-row select,
+.glpi-filter-row input { height: 28px; border: 1px solid #d4dce5 !important; background: #fff !important; border-radius: 2px !important; color: #334155 !important; padding: 0 10px !important; }
+.glpi-filter-row .wide { min-width: 280px; flex: 1; }
+.glpi-filter-row button { height: 28px; border: 1px solid #d4dce5; background: #fff; border-radius: 2px; color: #425466; font-weight: 700; font-size: 12px; padding: 0 9px; }
+.glpi-filter-row .search { background: var(--g-yellow); border-color: #e2aa1d; color: #263238; }
+
+.app-shell { padding-top: 104px !important; padding-left: 254px !important; }
 
 .app-grid {
   grid-template-areas:
@@ -39,33 +162,20 @@
   color: #1f2937 !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.25) !important;
 }
-
 .glpi-actions button.primary:hover,
 .hero-actions .cta-primary:hover,
 .participation-form .cta-primary:hover,
 .wizard-actions .cta-primary:hover { background: #ffb536 !important; }
-
 .hero-actions .cta-secondary,
 .gift-card .cta-primary,
-a[href*="lepotcommun"] {
-  display: inline-flex !important;
-  background: var(--glpi-red) !important;
-  border-color: var(--glpi-red-dark) !important;
-  color: #fff !important;
-}
-
+a[href*="lepotcommun"] { display: inline-flex !important; background: var(--glpi-red) !important; border-color: var(--glpi-red-dark) !important; color: #fff !important; }
 .gift-card { border-left: 4px solid var(--glpi-red) !important; }
 .gift-card span { color: var(--glpi-red-dark) !important; }
 .hero-actions { display: flex !important; align-items: stretch !important; gap: 8px !important; margin-top: 12px !important; }
 .hero-actions a, .hero-actions button { min-height: 36px !important; }
 
 .info-panel { background: #fff !important; }
-.info-panel .panel-title {
-  background: #eef3f8 !important;
-  border-left: 5px solid var(--glpi-orange) !important;
-  margin-bottom: 0 !important;
-}
-
+.info-panel .panel-title { background: #eef3f8 !important; border-left: 5px solid var(--glpi-orange) !important; margin-bottom: 0 !important; }
 .info-cards { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 12px !important; padding: 14px !important; }
 .info-card { min-height: 112px !important; border-radius: 6px !important; box-shadow: 0 1px 0 rgba(15,23,42,.03) !important; }
 .info-card:nth-child(1) { background: #fff !important; border-left: 5px solid var(--glpi-orange) !important; }
@@ -74,12 +184,7 @@ a[href*="lepotcommun"] {
 .info-card b { font-size: 14px !important; }
 .info-card p { font-size: 12px !important; line-height: 1.35 !important; }
 
-.consensus-strip {
-  background: #fff !important;
-  border-top: 4px solid #dfe7ef !important;
-  padding: 12px !important;
-  gap: 10px !important;
-}
+.consensus-strip { background: #fff !important; border-top: 4px solid #dfe7ef !important; padding: 12px !important; gap: 10px !important; }
 .consensus-strip .metric { border: 0 !important; border-radius: 0 !important; min-height: 66px !important; padding: 11px 12px !important; }
 .consensus-strip .metric:nth-child(2) { background: #ffe071 !important; }
 .consensus-strip .metric:nth-child(3) { background: #79d66c !important; }
@@ -96,39 +201,10 @@ a[href*="lepotcommun"] {
 .panel-title { border-left: 5px solid var(--glpi-blue) !important; }
 .data-lab-panel .panel-title { border-left-color: var(--glpi-green) !important; }
 .admin-panel .panel-title { border-left-color: var(--glpi-red) !important; }
-
-.side-quests-panel .quest-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  gap: 12px !important;
-}
-
-.quest-card {
-  position: relative !important;
-  min-height: 118px !important;
-  padding: 14px 14px 14px 74px !important;
-  border-radius: 8px !important;
-  border-left-width: 5px !important;
-  overflow: hidden !important;
-}
-.quest-card:before {
-  content: "";
-  position: absolute;
-  left: 14px;
-  top: 16px;
-  width: 42px;
-  height: 42px;
-  border-radius: 9px;
-  background: #eef3f8;
-  border: 1px solid #d8e1ec;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
-}
-.quest-card:after {
-  position: absolute;
-  left: 24px;
-  top: 24px;
-  font-size: 21px;
-  line-height: 1;
-}
+.side-quests-panel .quest-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 12px !important; }
+.quest-card { position: relative !important; min-height: 118px !important; padding: 14px 14px 14px 74px !important; border-radius: 8px !important; border-left-width: 5px !important; overflow: hidden !important; }
+.quest-card:before { content: ""; position: absolute; left: 14px; top: 16px; width: 42px; height: 42px; border-radius: 9px; background: #eef3f8; border: 1px solid #d8e1ec; box-shadow: inset 0 1px 0 rgba(255,255,255,.7); }
+.quest-card:after { position: absolute; left: 24px; top: 24px; font-size: 21px; line-height: 1; }
 .quest-card:nth-child(1):after { content: "⏩"; }
 .quest-card:nth-child(2):after { content: "🧘"; }
 .quest-card:nth-child(3):after { content: "🎯"; }
@@ -151,42 +227,11 @@ a[href*="lepotcommun"] {
 .tickets-wall { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
 .ticket { min-height: 184px !important; display: flex !important; flex-direction: column !important; }
 .ticket:hover, .ticket:nth-child(8n+5):hover, .ticket:nth-child(8n+6):hover, .ticket:nth-child(8n+7):hover, .ticket:nth-child(8n+8):hover { background: #fffbea !important; }
-.ticket-note {
-  margin-top: 9px;
-  padding: 8px 9px;
-  border: 1px solid #d8e1ec;
-  border-left: 4px solid var(--glpi-purple);
-  background: #fff;
-  color: #425466;
-  text-align: left;
-}
-.ticket-note span {
-  display: block;
-  color: #667085;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: .07em;
-  font-weight: 850;
-}
-.ticket-note p {
-  margin: 4px 0 0;
-  font-size: 12px;
-  line-height: 1.25;
-  color: #2d3748;
-}
-.ticket-badges {
-  margin-top: auto !important;
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 5px !important;
-}
-.ticket-badges span {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  min-height: 26px !important;
-}
-
+.ticket-note { margin-top: 9px; padding: 8px 9px; border: 1px solid #d8e1ec; border-left: 4px solid var(--glpi-purple); background: #fff; color: #425466; text-align: left; }
+.ticket-note span { display: block; color: #667085; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; font-weight: 850; }
+.ticket-note p { margin: 4px 0 0; font-size: 12px; line-height: 1.25; color: #2d3748; }
+.ticket-badges { margin-top: auto !important; display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 5px !important; }
+.ticket-badges span { display: inline-flex !important; align-items: center !important; justify-content: flex-start !important; min-height: 26px !important; }
 .chart-card:nth-child(odd) { background: #fff !important; }
 .chart-card:nth-child(even) { background: var(--glpi-grey-card) !important; }
 
@@ -194,12 +239,14 @@ a[href*="lepotcommun"] {
   .side-quests-panel .quest-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
   .tickets-wall { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
 }
-
 @media (max-width: 1050px) {
+  .glpi-sidebar { display: none; }
+  .glpi-topbar, .glpi-filterbar { left: 0; }
+  .glpi-filterbar { display: none; }
+  .app-shell { padding: 72px 12px 12px !important; }
   .app-grid { grid-template-areas: "hero" "info" "consensus" "badges" "tickets" "data" "admin" !important; }
   .info-cards, .side-quests-panel .quest-grid, .tickets-wall { grid-template-columns: 1fr !important; }
 }
-
 @media (max-width: 680px) {
   .hero-actions { display: grid !important; }
   .ticket-badges { grid-template-columns: 1fr !important; }
