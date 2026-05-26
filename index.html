@@ -62,7 +62,21 @@
       .tickets-panel .ticket-note p{margin:3px 0 0!important;line-height:1.15!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
       .tickets-panel .ticket-badges{margin:6px 0 0!important;padding-top:6px!important;gap:4px!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
       .tickets-panel .ticket-badges span{min-height:21px!important;padding:3px 5px!important;font-size:10px!important;line-height:1.05!important}
-      @media(max-width:1350px){.side-quests-panel .quest-card{padding-top:8px!important;padding-bottom:8px!important}.tickets-panel .ticket{padding:9px!important}}
+      .admin-panel > div:first-child{margin-bottom:10px!important}
+      .admin-panel > div:first-child .panel-title{padding:9px 12px!important;min-height:0!important}
+      .admin-panel > div:first-child .panel-title>span{width:28px!important;height:28px!important;font-size:14px!important}
+      .admin-panel > div:first-child .panel-title h2{font-size:15px!important;line-height:1.05!important}
+      .admin-panel > div:first-child .panel-title p{font-size:11px!important;margin-top:1px!important}
+      .admin-panel > div:first-child .quest-grid{padding:10px!important;gap:8px!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:start!important}
+      .admin-panel > div:first-child .quest-card{min-height:0!important;height:auto!important;padding:8px 10px!important;border-radius:6px!important;border-left-width:4px!important}
+      .admin-panel > div:first-child .quest-card:before,.admin-panel > div:first-child .quest-card:after{display:none!important}
+      .admin-panel > div:first-child .quest-card span{font-size:9px!important;line-height:1!important;margin:0!important}
+      .admin-panel > div:first-child .quest-card b{font-size:15px!important;line-height:1.05!important;margin:3px 0 0!important}
+      .admin-panel > div:first-child .quest-card p{font-size:11px!important;line-height:1.12!important;margin:4px 0 0!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+      .admin-panel > div:first-child .result-fields{margin:10px!important;gap:8px!important}
+      .admin-panel > div:first-child .result-fields .metric{padding:8px!important;min-height:0!important}
+      @media(max-width:1350px){.side-quests-panel .quest-card{padding-top:8px!important;padding-bottom:8px!important}.tickets-panel .ticket{padding:9px!important}.admin-panel > div:first-child .quest-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+      @media(max-width:680px){.admin-panel > div:first-child .quest-grid{grid-template-columns:1fr!important}}
     </style>
   </body>
 </html>
