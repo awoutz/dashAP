@@ -1,0 +1,261 @@
+/* GLPI fork final polish: stronger zoning, colored cards, CTA hierarchy */
+
+:root {
+  --glpi-orange: #f5a623;
+  --glpi-orange-dark: #d98a00;
+  --glpi-red: #dc5b5b;
+  --glpi-red-dark: #b83f3f;
+  --glpi-blue: #2f6fa3;
+  --glpi-green: #58b368;
+  --glpi-grey-card: #f6f8fb;
+}
+
+/* Fuse top + filter visually: one compact GLPI command zone */
+.glpi-topbar {
+  height: 48px !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+.glpi-filterbar {
+  top: 48px !important;
+  min-height: 44px !important;
+  padding: 7px 18px !important;
+  border-top: 1px solid #eef2f6 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .06) !important;
+}
+
+.app-shell {
+  padding-top: 104px !important;
+}
+
+/* Orange = add bet / create ticket / participation action */
+.glpi-actions button.primary,
+.hero-actions .cta-primary,
+.participation-launch,
+.participation-form .cta-primary,
+.wizard-actions .cta-primary {
+  background: var(--glpi-orange) !important;
+  border-color: var(--glpi-orange-dark) !important;
+  color: #1f2937 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+
+.glpi-actions button.primary:hover,
+.hero-actions .cta-primary:hover,
+.participation-launch:hover,
+.participation-form .cta-primary:hover,
+.wizard-actions .cta-primary:hover {
+  background: #ffb536 !important;
+}
+
+/* Red = cagnotte, visible again */
+.hero-actions .cta-secondary {
+  display: inline-flex !important;
+  background: var(--glpi-red) !important;
+  border-color: var(--glpi-red-dark) !important;
+  color: #fff !important;
+}
+
+.gift-card .cta-primary,
+a[href*="lepotcommun"] {
+  background: var(--glpi-red) !important;
+  border-color: var(--glpi-red-dark) !important;
+  color: #fff !important;
+}
+
+.gift-card {
+  border-left: 4px solid var(--glpi-red) !important;
+}
+
+.gift-card span {
+  color: var(--glpi-red-dark) !important;
+}
+
+/* Hero: less vertical split, clearer action row */
+.hero-panel {
+  padding-bottom: 18px !important;
+}
+
+.hero-actions {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+}
+
+.hero-actions a,
+.hero-actions button {
+  min-height: 36px !important;
+}
+
+/* Color KPI cards like GLPI dashboard examples */
+.glpi-status-row {
+  gap: 0 !important;
+  border: 1px solid #dce5ed !important;
+  border-bottom: 0 !important;
+  margin-top: 12px !important;
+}
+
+.glpi-kpi {
+  border: 0 !important;
+  border-right: 1px solid rgba(255,255,255,.45) !important;
+  border-radius: 0 !important;
+  padding: 12px 14px !important;
+  min-height: 68px !important;
+  color: #1f2937 !important;
+}
+
+.glpi-kpi span,
+.glpi-kpi b {
+  color: inherit !important;
+}
+
+.glpi-kpi span {
+  opacity: .72 !important;
+}
+
+.glpi-kpi b {
+  font-size: 21px !important;
+}
+
+.glpi-kpi:nth-child(1) { background: #ffe071 !important; }
+.glpi-kpi:nth-child(2) { background: #ffc978 !important; }
+.glpi-kpi:nth-child(3) { background: #79d66c !important; }
+.glpi-kpi:nth-child(4) { background: #6fa7e8 !important; color: #fff !important; }
+.glpi-kpi:nth-child(5) { background: #d9dcdf !important; }
+
+/* Consensus as colored mini dashboard cards */
+.consensus-strip {
+  background: #fff !important;
+  border-top: 4px solid #dfe7ef !important;
+}
+
+.consensus-strip .metric {
+  border: 0 !important;
+  border-radius: 0 !important;
+  min-height: 66px !important;
+  padding: 11px 12px !important;
+}
+
+.consensus-strip .metric:nth-child(2) { background: #ffe071 !important; }
+.consensus-strip .metric:nth-child(3) { background: #79d66c !important; }
+.consensus-strip .metric:nth-child(4) { background: #ffc978 !important; }
+.consensus-strip .metric:nth-child(5) { background: #d9ecfb !important; }
+.consensus-strip .metric:nth-child(6) { background: #d9dcdf !important; }
+
+.consensus-strip .metric span,
+.consensus-strip .metric strong,
+.consensus-strip .metric small {
+  color: #1f2937 !important;
+}
+
+/* Panel zoning: more obvious section separation */
+.info-panel,
+.tickets-panel,
+.admin-panel {
+  background: #fff !important;
+}
+
+.participation-zone,
+.side-quests-panel,
+.message-wall-panel,
+.data-lab-panel {
+  background: #f6f8fb !important;
+}
+
+.info-panel .panel-title,
+.tickets-panel .panel-title,
+.admin-panel .panel-title {
+  background: #fff !important;
+}
+
+.participation-zone .panel-title,
+.side-quests-panel .panel-title,
+.message-wall-panel .panel-title,
+.data-lab-panel .panel-title {
+  background: #eef3f8 !important;
+}
+
+.panel-title {
+  border-left: 5px solid var(--glpi-blue) !important;
+}
+
+.participation-zone .panel-title { border-left-color: var(--glpi-orange) !important; }
+.message-wall-panel .panel-title { border-left-color: var(--glpi-purple, #8b70c9) !important; }
+.data-lab-panel .panel-title { border-left-color: var(--glpi-green) !important; }
+.admin-panel .panel-title { border-left-color: var(--glpi-red) !important; }
+
+/* More readable inner cards */
+.info-card,
+.quest-card,
+.message-card,
+.chart-card,
+.podium-card {
+  box-shadow: 0 1px 0 rgba(15,23,42,.03) !important;
+}
+
+.info-card:nth-child(odd),
+.quest-card:nth-child(odd),
+.message-card:nth-child(odd),
+.chart-card:nth-child(odd) {
+  background: #fff !important;
+}
+
+.info-card:nth-child(even),
+.quest-card:nth-child(even),
+.message-card:nth-child(even),
+.chart-card:nth-child(even) {
+  background: var(--glpi-grey-card) !important;
+}
+
+/* Tickets: keep table feel but give visual zoning */
+.tickets-panel:before {
+  background: #eef3f8 !important;
+  font-weight: 700 !important;
+}
+
+.ticket:hover {
+  background: #fffbea !important;
+}
+
+.ticket:nth-child(8n+5):hover,
+.ticket:nth-child(8n+6):hover,
+.ticket:nth-child(8n+7):hover,
+.ticket:nth-child(8n+8):hover {
+  background: #fffbea !important;
+}
+
+/* Desktop: compact command rows and prevent wasted vertical space */
+@media (min-width: 1051px) {
+  .hero-panel {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    column-gap: 16px !important;
+    align-items: end !important;
+  }
+
+  .hero-panel:before,
+  .brand-pill,
+  .hero-panel h1,
+  .hero-copy,
+  .glpi-status-row {
+    grid-column: 1 / -1 !important;
+  }
+
+  .hero-actions {
+    grid-column: 1 / -1 !important;
+  }
+
+  .info-panel,
+  .participation-zone,
+  .side-quests-panel,
+  .message-wall-panel {
+    min-height: 100% !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .hero-actions {
+    display: grid !important;
+  }
+}
