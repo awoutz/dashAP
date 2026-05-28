@@ -36,11 +36,37 @@ function readTickets() {
       date: parts[0] || '',
       sex: parts[1] || '',
       firstName: parts[2] || '',
+      weightLabel: facts[0] || '',
+      heightLabel: facts[1] || '',
       weight: parseNumber(facts[0]),
       height: parseNumber(facts[1]),
       note: messages.get(player) || '',
     };
   }).filter((ticket) => ticket.player);
+}
+
+function renderTicketTags(tickets) {
+  tickets.forEach((ticket) => {
+    const oldPrediction = ticket.node.querySelector('.ticket-prediction');
+    const oldFacts = ticket.node.querySelector('.ticket-facts');
+    if (!oldPrediction) return;
+    oldPrediction.style.display = 'none';
+    if (oldFacts) oldFacts.style.display = 'none';
+    ticket.node.querySelector('.ticket-tags-main')?.remove();
+    const tags = document.createElement('div');
+    tags.className = 'ticket-tags ticket-tags-main';
+    const sexIcon = ticket.sex === 'Fille' ? '🎀' : ticket.sex === 'Garçon' ? '🧢' : '🎁';
+    tags.innerHTML = `
+      <span class="ticket-tag tag-date">📅 ${ticket.date || '—'}</span>
+      <span class="ticket-tag tag-sex">${sexIcon} ${ticket.sex || '—'}</span>
+      <span class="ticket-tag tag-name">✨ ${ticket.firstName || 'Prénom mystère'}</span>
+      <span class="ticket-tag tag-weight">⚖️ ${ticket.weightLabel || '—'}</span>
+      <span class="ticket-tag tag-height">📏 ${ticket.heightLabel || '—'}</span>
+    `;
+    const top = ticket.node.querySelector('.ticket-top');
+    if (top) top.insertAdjacentElement('afterend', tags);
+    ticket.node.classList.add('ticket-card-pretty');
+  });
 }
 
 function injectTicketMessages(tickets) {
@@ -106,6 +132,7 @@ function renderDataLab(tickets) {
 function enhance() {
   const tickets = readTickets();
   if (!tickets.length) return;
+  renderTicketTags(tickets);
   injectTicketMessages(tickets);
   renderDataLab(tickets);
 }
