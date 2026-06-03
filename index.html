@@ -44,7 +44,24 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script type="module" src="/src/glpi-dom-enhance.js"></script>
+    <script>
+      (function(){
+        const content = '📅 Pour information, le terme officiel est prévu le 25/06.';
+        function addOfficialTermNote(){
+          const copy = document.querySelector('.hero-copy');
+          if (!copy || document.querySelector('.official-term-note')) return false;
+          const note = document.createElement('p');
+          note.className = 'official-term-note';
+          note.textContent = content;
+          copy.insertAdjacentElement('afterend', note);
+          return true;
+        }
+        const timer = setInterval(function(){ if (addOfficialTermNote()) clearInterval(timer); }, 150);
+        setTimeout(function(){ clearInterval(timer); addOfficialTermNote(); }, 5000);
+      })();
+    </script>
     <style id="final-density-fix">
+      .official-term-note{display:inline-flex!important;align-items:center!important;width:max-content!important;max-width:100%!important;margin:6px 0 0!important;padding:5px 9px!important;border:1px solid #d7e0ea!important;border-left:4px solid #f5a623!important;border-radius:6px!important;background:#fff8e7!important;color:#24364a!important;font-size:12px!important;font-weight:700!important;line-height:1.2!important}
       .side-quests-panel .quest-grid{gap:8px!important;padding:10px!important;align-items:start!important}
       .side-quests-panel .quest-card{min-height:0!important;height:auto!important;padding:8px 10px 8px 54px!important;border-radius:6px!important}
       .side-quests-panel .quest-card:before{left:10px!important;top:10px!important;width:30px!important;height:30px!important;border-radius:7px!important}
@@ -98,6 +115,7 @@
         .brand-pill{font-size:11px!important;padding:3px 7px!important;margin-bottom:8px!important}
         .hero-panel h1{font-size:22px!important;line-height:1.05!important;margin:4px 0 5px!important;letter-spacing:-.035em!important}
         .hero-copy{font-size:12px!important;line-height:1.25!important;margin:0!important;padding-right:0!important}
+        .official-term-note{display:flex!important;width:100%!important;margin-top:7px!important;padding:6px 8px!important;font-size:11px!important}
         .hero-actions{display:grid!important;grid-template-columns:1fr!important;gap:7px!important;margin-top:10px!important}
         .hero-actions a,.hero-actions button{min-height:34px!important;font-size:12px!important;border-radius:6px!important}
         .panel-title{padding:9px 10px!important;gap:8px!important}
