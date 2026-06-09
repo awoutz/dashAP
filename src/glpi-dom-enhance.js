@@ -1,7 +1,5 @@
 const TERM_DATE = '2026-06-25';
-const TERM_LABEL = '25/06';
 const COLORS = { blue: '#24548d', blue2: '#2f6fa9', orange: '#f08a24', pink: '#d6336c', green: '#2f7a45', purple: '#7c5cc4', gold: '#d98a00' };
-
 const normalize = (value) => String(value || '').trim();
 const esc = (value) => String(value || '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
@@ -46,11 +44,7 @@ function percentile(values, p) {
 }
 function initials(name) {
   const parts = normalize(name).replace(/[._-]+/g, ' ').split(/\s+/).filter(Boolean);
-  if (!parts.length) return '•';
-  return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
-}
-function formatValue(value, digits = 1) {
-  return value.toLocaleString('fr-FR', { maximumFractionDigits: digits });
+  return parts.length ? (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase() : '•';
 }
 
 function readMessages() {
@@ -69,18 +63,7 @@ function readTickets() {
     const prediction = normalize(node.querySelector('.ticket-prediction')?.textContent);
     const parts = prediction.split('·').map((part) => normalize(part));
     const facts = [...node.querySelectorAll('.ticket-facts span')].map((span) => normalize(span.textContent));
-    return {
-      node,
-      player,
-      date: parts[0] || '',
-      sex: parts[1] || '',
-      firstName: parts[2] || '',
-      weightLabel: facts[0] || '',
-      heightLabel: facts[1] || '',
-      weight: parseWeightKg(facts[0]),
-      height: parseNumber(facts[1]),
-      note: messages.get(player) || '',
-    };
+    return { node, player, date: parts[0] || '', sex: parts[1] || '', firstName: parts[2] || '', weightLabel: facts[0] || '', heightLabel: facts[1] || '', weight: parseWeightKg(facts[0]), height: parseNumber(facts[1]), note: messages.get(player) || '' };
   }).filter((ticket) => ticket.player);
 }
 
@@ -138,95 +121,80 @@ function ensureStyle() {
     .message-wall-panel{display:none!important}
     .data-lab-panel.c2{background:#fff!important;border:1px solid #d8e1ec!important;border-radius:10px!important;padding:0!important;box-shadow:0 2px 8px rgba(15,23,42,.06)!important;overflow:hidden!important}
     .data-lab-panel.c2 .panel-title{margin:0!important;padding:12px 14px!important;border-bottom:1px solid #d8e1ec!important;background:linear-gradient(180deg,#fff,#f7f9fc)!important}.data-lab-panel.c2 .panel-title>span{background:#e8f2ff!important;color:#24548d!important;border-radius:7px!important}.data-lab-panel.c2 .panel-title h2{color:#22364d!important;font-size:18px!important}.data-lab-panel.c2 .panel-title p{color:#66788f!important;font-size:12px!important}
-    .c2-grid{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important;padding:12px!important;background:#f2f5f9!important;align-items:stretch!important}
-    .c2-card{background:#fff!important;border:1px solid #d8e1ec!important;border-radius:9px!important;padding:12px!important;min-width:0!important}.c2-card.full{grid-column:1/-1!important}.c2-card.half{grid-column:auto!important;min-height:632px!important;display:flex!important;flex-direction:column!important}
-    .c2-head{display:flex!important;justify-content:space-between!important;gap:10px!important;align-items:flex-start!important;margin-bottom:10px!important}.c2-head b{display:block!important;color:#22364d!important;font-size:14px!important;font-weight:900!important;line-height:1.1!important}.c2-head span{display:block!important;color:#6b7a90!important;font-size:11px!important;margin-top:2px!important;line-height:1.25!important}
-    .c2-stack{display:grid!important;grid-template-rows:repeat(3,1fr)!important;gap:10px!important;flex:1 1 auto!important}.c2-density-row{display:grid!important;grid-template-rows:auto 1fr!important;border:1px solid #d8e1ec!important;border-radius:8px!important;background:#fbfcfe!important;padding:8px!important;min-height:166px!important}.c2-density-label{margin-bottom:2px!important}.c2-density-label b{display:block!important;font-size:13px!important;color:#22364d!important}.c2-density-label span{display:block!important;margin-top:2px!important;font-size:10px!important;color:#66788f!important}.c2-density-row svg{width:100%!important;height:128px!important;display:block!important;align-self:end!important}
-    .c2-boxplot{flex:1 1 auto!important;display:flex!important;flex-direction:column!important}.c2-boxplot svg{width:100%!important;height:540px!important;display:block!important;flex:1 1 auto!important}.c2-note{font-size:11px!important;color:#66788f!important;line-height:1.35!important;margin-top:8px!important}.empty-mini{display:grid!important;place-items:center!important;min-height:80px!important;border:1px dashed #cbd5e1!important;border-radius:8px!important;color:#64748b!important;font-size:12px!important;background:#fbfcfe!important}
-    .c2-canvas-wrap{position:relative!important;border:1px solid #d8e1ec!important;border-radius:9px!important;background:radial-gradient(circle at 50% 45%,#fff,#f2f6fb)!important;height:460px!important;overflow:hidden!important;touch-action:none!important}.c2-canvas-wrap canvas{width:100%!important;height:460px!important;display:block!important;cursor:grab!important}.c2-canvas-wrap.dragging canvas{cursor:grabbing!important}.c2-toolbar{position:absolute!important;z-index:3!important;top:9px!important;left:9px!important;display:flex!important;gap:6px!important}.c2-toolbar button{border:1px solid #cbd8e6!important;background:#fff!important;color:#24548d!important;border-radius:7px!important;padding:5px 8px!important;font-size:11px!important;font-weight:900!important;cursor:pointer!important}.c2-tooltip{position:absolute!important;left:9px!important;right:9px!important;bottom:9px!important;border:1px solid rgba(203,216,230,.92)!important;background:rgba(255,255,255,.92)!important;backdrop-filter:blur(8px)!important;border-radius:8px!important;padding:8px!important;font-size:11px!important;color:#66788f!important}.c2-tooltip b{color:#22364d!important}
-    .c2-legend{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;margin-top:9px!important}.c2-leg{border:1px solid #d8e1ec!important;border-radius:8px!important;background:#fff!important;padding:8px!important}.c2-leg h3{display:flex!important;align-items:center!important;gap:7px!important;margin:0!important;font-size:11px!important;color:#22364d!important}.c2-leg-dot{width:10px!important;height:10px!important;border-radius:999px!important;display:inline-block!important}.c2-leg p{margin:5px 0 0!important;color:#66788f!important;font-size:10px!important;line-height:1.2!important}.c2-leg b{margin-left:auto!important;color:#24548d!important}
-    @media(max-width:1100px){.c2-grid{grid-template-columns:1fr!important}.c2-card.half{grid-column:auto!important;min-height:0!important}.c2-legend{grid-template-columns:1fr 1fr!important}}
-    @media(max-width:680px){.c2-grid{padding:8px!important;gap:8px!important}.c2-card{padding:9px!important}.c2-canvas-wrap,.c2-canvas-wrap canvas{height:360px!important}.c2-legend{grid-template-columns:1fr!important}}
+    .c2-grid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;padding:12px!important;background:#f2f5f9!important}.c2-card{background:#fff!important;border:1px solid #d8e1ec!important;border-radius:9px!important;padding:12px!important;min-width:0!important}.c2-head{margin-bottom:10px!important}.c2-head b{display:block!important;color:#22364d!important;font-size:14px!important;font-weight:900!important;line-height:1.1!important}.c2-head span{display:block!important;color:#6b7a90!important;font-size:11px!important;margin-top:2px!important;line-height:1.25!important}
+    .c2-mirror-card{padding:0!important}.c2-mirror-head{display:grid!important;grid-template-columns:1fr 1fr!important;border-bottom:1px solid #d8e1ec!important;background:linear-gradient(180deg,#fff,#f7f9fc)!important}.c2-mirror-head>div{padding:12px!important}.c2-mirror-head>div+div{border-left:1px solid #d8e1ec!important}.c2-mirror-grid{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}.c2-mirror-row{display:contents!important}.c2-cell{height:188px!important;min-height:188px!important;border-bottom:1px solid #e0e7ef!important;padding:10px 12px!important;background:#fff!important;overflow:hidden!important}.c2-cell:nth-child(4n+3),.c2-cell:nth-child(4n+4){background:#fbfcfe!important}.c2-cell:nth-child(even){border-left:1px solid #e0e7ef!important}.c2-cell-title{display:flex!important;justify-content:space-between!important;align-items:flex-start!important;gap:8px!important;margin-bottom:4px!important}.c2-cell-title b{font-size:13px!important;color:#22364d!important}.c2-cell-title span{font-size:10px!important;color:#66788f!important}.c2-cell svg{width:100%!important;height:142px!important;display:block!important}.c2-note{font-size:11px!important;color:#66788f!important;line-height:1.35!important;padding:10px 12px!important;background:#fbfcfe!important}
+    .c2-canvas-wrap{position:relative!important;border:1px solid #d8e1ec!important;border-radius:9px!important;background:radial-gradient(circle at 50% 45%,#fff,#f2f6fb)!important;height:620px!important;overflow:hidden!important;touch-action:none!important}.c2-canvas-wrap canvas{width:100%!important;height:620px!important;display:block!important;cursor:grab!important}.c2-canvas-wrap.dragging canvas{cursor:grabbing!important}.c2-toolbar{position:absolute!important;z-index:3!important;top:9px!important;left:9px!important;display:flex!important;gap:6px!important}.c2-toolbar button{border:1px solid #cbd8e6!important;background:#fff!important;color:#24548d!important;border-radius:7px!important;padding:5px 8px!important;font-size:11px!important;font-weight:900!important;cursor:pointer!important}.c2-tooltip{position:absolute!important;left:9px!important;right:9px!important;bottom:9px!important;border:1px solid rgba(203,216,230,.92)!important;background:rgba(255,255,255,.94)!important;backdrop-filter:blur(8px)!important;border-radius:8px!important;padding:9px!important;font-size:12px!important;color:#66788f!important}.c2-tooltip b{color:#22364d!important}
+    .c2-legend{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:7px!important;margin-top:9px!important}.c2-leg{border:1px solid #d8e1ec!important;border-radius:8px!important;background:#fff!important;padding:8px!important}.c2-leg h3{display:flex!important;align-items:center!important;gap:7px!important;margin:0!important;font-size:11px!important;color:#22364d!important}.c2-leg-dot{width:10px!important;height:10px!important;border-radius:999px!important;display:inline-block!important}.c2-leg p{margin:5px 0 0!important;color:#66788f!important;font-size:10px!important;line-height:1.2!important}.c2-leg b{margin-left:auto!important;color:#24548d!important}
+    @media(max-width:1100px){.c2-mirror-head,.c2-mirror-grid{grid-template-columns:1fr!important}.c2-cell:nth-child(even),.c2-mirror-head>div+div{border-left:0!important}.c2-legend{grid-template-columns:1fr 1fr!important}.c2-canvas-wrap,.c2-canvas-wrap canvas{height:520px!important}}
+    @media(max-width:680px){.c2-grid{padding:8px!important;gap:8px!important}.c2-card{padding:9px!important}.c2-cell{height:168px!important;min-height:168px!important}.c2-cell svg{height:122px!important}.c2-canvas-wrap,.c2-canvas-wrap canvas{height:430px!important}.c2-legend{grid-template-columns:1fr!important}}
   `;
   document.head.appendChild(style);
 }
-function card(title, subtitle, body, extra = '') {
-  return `<article class="c2-card ${extra}"><div class="c2-head"><div><b>${title}</b><span>${subtitle}</span></div></div>${body}</article>`;
+function card(title, subtitle, body) {
+  return `<article class="c2-card"><div class="c2-head"><b>${title}</b><span>${subtitle}</span></div>${body}</article>`;
 }
 
-function densitySvg(tickets, type) {
-  const isDate = type === 'date';
-  const isWeight = type === 'weight';
-  const values = tickets.map((ticket) => isDate ? dayDiff(ticket.date) : isWeight ? ticket.weight : ticket.height).filter(Number.isFinite);
-  if (!values.length) return '<div class="empty-mini">Pas encore assez de valeurs.</div>';
-  const min = isDate ? Math.min(-12, Math.min(...values)) : isWeight ? 2.3 : 44;
-  const max = isDate ? Math.max(14, Math.max(...values)) : isWeight ? 4.6 : 56;
-  const color = isDate ? COLORS.orange : isWeight ? COLORS.green : COLORS.blue;
-  const unit = isDate ? 'j' : isWeight ? 'kg' : 'cm';
+function valueConfig(type, tickets) {
+  if (type === 'date') return { title: 'Date', note: 'Écart au terme', values: tickets.map((ticket) => dayDiff(ticket.date)).filter(Number.isFinite), min: -12, max: 14, color: COLORS.orange, unit: 'j', digits: 0 };
+  if (type === 'weight') return { title: 'Poids', note: 'Axe en kg', values: tickets.map((ticket) => ticket.weight).filter(Number.isFinite), min: 2.3, max: 4.6, color: COLORS.green, unit: 'kg', digits: 1 };
+  return { title: 'Taille', note: 'Axe en cm', values: tickets.map((ticket) => ticket.height).filter(Number.isFinite), min: 44, max: 56, color: COLORS.blue, unit: 'cm', digits: 0 };
+}
+function valueLabel(config, value) {
+  if (config.unit === 'j') return `J${Math.round(value) > 0 ? '+' : ''}${Math.round(value)}`;
+  return `${value.toLocaleString('fr-FR', { maximumFractionDigits: config.digits })}${config.unit}`;
+}
+function densitySvg(config) {
+  const values = config.values;
+  if (!values.length) return '<div class="empty-mini">Pas assez de valeurs.</div>';
+  const min = Math.min(config.min, Math.min(...values));
+  const max = Math.max(config.max, Math.max(...values));
   const bins = Array.from({ length: 22 }, () => 0);
   values.forEach((value) => {
     const index = Math.max(0, Math.min(21, Math.floor(((value - min) / Math.max(1, max - min)) * 22)));
     bins[index] += 1;
   });
   const maxBin = Math.max(1, ...bins);
-  const x0 = 58;
-  const y = 86;
-  const width = 640;
-  let top = '';
-  let bottom = '';
+  const x0 = 54, y = 72, width = 640;
+  let top = '', bottom = '';
   bins.forEach((count, index) => {
     const x = x0 + index * width / 21;
-    const height = 5 + (count / maxBin) * 48;
-    top += `${index ? 'L' : 'M'}${x},${y - height}`;
-    bottom = `L${x},${y + height}` + bottom;
+    const h = 6 + (count / maxBin) * 48;
+    top += `${index ? 'L' : 'M'}${x},${y - h}`;
+    bottom = `L${x},${y + h}` + bottom;
   });
   let dots = '';
   values.slice(0, 90).forEach((value, index) => {
     const x = x0 + ((value - min) / Math.max(1, max - min)) * width;
     const yy = y + ((index % 5) - 2) * 7;
-    dots += `<circle cx="${x}" cy="${yy}" r="3" fill="${color}" fill-opacity=".55"/>`;
+    dots += `<circle cx="${x}" cy="${yy}" r="3.1" fill="${config.color}" fill-opacity=".72"/>`;
   });
   let ticks = '';
   for (let index = 0; index <= 4; index += 1) {
     const value = min + (max - min) * index / 4;
     const x = x0 + index * width / 4;
-    const label = isDate ? `J${Math.round(value) > 0 ? '+' : ''}${Math.round(value)}` : `${value.toLocaleString('fr-FR', { maximumFractionDigits: isWeight ? 1 : 0 })}${unit}`;
-    ticks += `<line x1="${x}" y1="132" x2="${x}" y2="138" stroke="#9eb1c7"/><text x="${x}" y="154" text-anchor="middle" fill="#66788f" font-size="10">${label}</text>`;
+    ticks += `<line x1="${x}" y1="126" x2="${x}" y2="132" stroke="#9eb1c7"/><text x="${x}" y="148" text-anchor="middle" fill="#66788f" font-size="10">${valueLabel(config, value)}</text>`;
   }
-  const termLine = isDate && min <= 0 && max >= 0 ? `<line x1="${x0 + ((0 - min) / (max - min)) * width}" y1="28" x2="${x0 + ((0 - min) / (max - min)) * width}" y2="132" stroke="${COLORS.orange}" stroke-width="2" stroke-dasharray="5 4"/><text x="${x0 + ((0 - min) / (max - min)) * width + 6}" y="40" fill="${COLORS.orange}" font-size="10" font-weight="900">TERME</text>` : '';
-  return `<svg viewBox="0 0 740 164"><path d="${top} ${bottom} Z" fill="${color}" fill-opacity=".24" stroke="${color}" stroke-width="2"/>${dots}${termLine}<line x1="${x0}" y1="132" x2="${x0 + width}" y2="132" stroke="#9eb1c7"/>${ticks}</svg>`;
+  const termLine = config.unit === 'j' && min <= 0 && max >= 0 ? `<line x1="${x0 + ((0 - min) / (max - min)) * width}" y1="24" x2="${x0 + ((0 - min) / (max - min)) * width}" y2="126" stroke="${COLORS.orange}" stroke-width="2" stroke-dasharray="5 4"/><text x="${x0 + ((0 - min) / (max - min)) * width + 6}" y="38" fill="${COLORS.orange}" font-size="10" font-weight="900">TERME</text>` : '';
+  return `<svg viewBox="0 0 740 160"><path d="${top} ${bottom} Z" fill="${config.color}" fill-opacity=".24" stroke="${config.color}" stroke-width="2"/>${dots}${termLine}<line x1="${x0}" y1="126" x2="${x0 + width}" y2="126" stroke="#9eb1c7"/>${ticks}</svg>`;
 }
-function stackedDistributions(tickets) {
-  const items = [
-    { type: 'date', title: 'Date', note: 'Écart au terme' },
-    { type: 'weight', title: 'Poids', note: 'Axe en kg' },
-    { type: 'height', title: 'Taille', note: 'Axe en cm' },
-  ];
-  return `<div class="c2-stack">${items.map((item) => `<div class="c2-density-row"><div class="c2-density-label"><b>${item.title}</b><span>${item.note}</span></div>${densitySvg(tickets, item.type)}</div>`).join('')}</div><div class="c2-note">Chaque point représente un pari individuel. La bande montre la zone de concentration.</div>`;
+function boxplotSvg(config) {
+  const values = config.values;
+  if (!values.length) return '<div class="empty-mini">Pas assez de valeurs.</div>';
+  const min = config.min, max = config.max;
+  const x0 = 54, x1 = 694, y = 72;
+  const map = (value) => x0 + ((value - min) / (max - min)) * (x1 - x0);
+  const q1 = percentile(values, .25), med = percentile(values, .5), q3 = percentile(values, .75), mn = Math.min(...values), mx = Math.max(...values);
+  let ticks = '';
+  for (let index = 0; index <= 4; index += 1) {
+    const value = min + (max - min) * index / 4;
+    const x = x0 + index * (x1 - x0) / 4;
+    ticks += `<line x1="${x}" y1="126" x2="${x}" y2="132" stroke="#9eb1c7"/><text x="${x}" y="148" text-anchor="middle" fill="#66788f" font-size="10">${valueLabel(config, value)}</text>`;
+  }
+  return `<svg viewBox="0 0 740 160"><line x1="${x0}" y1="126" x2="${x1}" y2="126" stroke="#dbe4ee"/><line x1="${map(mn)}" y1="${y}" x2="${map(mx)}" y2="${y}" stroke="#9eb1c7" stroke-width="2"/><rect x="${map(q1)}" y="${y - 18}" width="${Math.max(2, map(q3) - map(q1))}" height="36" rx="8" fill="${config.color}" fill-opacity=".18" stroke="${config.color}" stroke-width="2"/><line x1="${map(med)}" y1="${y - 28}" x2="${map(med)}" y2="${y + 28}" stroke="${config.color}" stroke-width="3"/><circle cx="${map(mn)}" cy="${y}" r="5" fill="${config.color}"/><circle cx="${map(mx)}" cy="${y}" r="5" fill="${config.color}"/><text x="${map(med) + 8}" y="${y - 34}" fill="${config.color}" font-size="10" font-weight="900">médiane ${valueLabel(config, med)}</text>${ticks}</svg>`;
 }
-function boxplotSvg(tickets) {
-  const sets = [
-    { label: 'Date', values: tickets.map((ticket) => dayDiff(ticket.date)), min: -12, max: 14, color: COLORS.orange, unit: 'j', digits: 0 },
-    { label: 'Poids', values: tickets.map((ticket) => ticket.weight).filter(Number.isFinite), min: 2.3, max: 4.6, color: COLORS.green, unit: 'kg', digits: 1 },
-    { label: 'Taille', values: tickets.map((ticket) => ticket.height).filter(Number.isFinite), min: 44, max: 56, color: COLORS.blue, unit: 'cm', digits: 0 },
-  ];
-  let svg = '<svg viewBox="0 0 740 540">';
-  sets.forEach((set, index) => {
-    if (!set.values.length) return;
-    const rowTop = 24 + index * 168;
-    const y = rowTop + 78;
-    const x0 = 92;
-    const x1 = 700;
-    const map = (value) => x0 + ((value - set.min) / (set.max - set.min)) * (x1 - x0);
-    const q1 = percentile(set.values, .25);
-    const med = percentile(set.values, .5);
-    const q3 = percentile(set.values, .75);
-    const mn = Math.min(...set.values);
-    const mx = Math.max(...set.values);
-    const formatter = (value) => value.toLocaleString('fr-FR', { maximumFractionDigits: set.digits });
-    svg += `<text x="18" y="${rowTop + 22}" fill="#24364a" font-size="13" font-weight="900">${set.label}</text><line x1="${x0}" y1="${y + 46}" x2="${x1}" y2="${y + 46}" stroke="#dbe4ee"/><text x="${x0}" y="${y + 68}" fill="#66788f" font-size="10" text-anchor="middle">${formatter(set.min)}${set.unit}</text><text x="${x1}" y="${y + 68}" fill="#66788f" font-size="10" text-anchor="middle">${formatter(set.max)}${set.unit}</text><line x1="${map(mn)}" y1="${y}" x2="${map(mx)}" y2="${y}" stroke="#9eb1c7" stroke-width="2"/><rect x="${map(q1)}" y="${y - 18}" width="${Math.max(2, map(q3) - map(q1))}" height="36" rx="8" fill="${set.color}" fill-opacity=".18" stroke="${set.color}" stroke-width="2"/><line x1="${map(med)}" y1="${y - 28}" x2="${map(med)}" y2="${y + 28}" stroke="${set.color}" stroke-width="3"/><circle cx="${map(mn)}" cy="${y}" r="5" fill="${set.color}"/><circle cx="${map(mx)}" cy="${y}" r="5" fill="${set.color}"/><text x="${map(med) + 8}" y="${y - 34}" fill="${set.color}" font-size="10" font-weight="900">médiane ${formatter(med)}${set.unit}</text>`;
-  });
-  return `${svg}</svg><div class="c2-note">Le rectangle = 50% des paris. Le trait = médiane. Les points = minimum / maximum.</div>`;
+function mirrorViz(tickets) {
+  const rows = ['date', 'weight', 'height'].map((type) => valueConfig(type, tickets));
+  return `<article class="c2-card c2-mirror-card"><div class="c2-mirror-head"><div><b>Distributions date / poids / taille</b><span>Chaque point représente un pari individuel.</span></div><div><b>Boxplots expliqués</b><span>Rectangle = 50%, trait = médiane, points = min/max.</span></div></div><div class="c2-mirror-grid">${rows.map((row) => `<div class="c2-mirror-row"><div class="c2-cell"><div class="c2-cell-title"><b>${row.title}</b><span>${row.note}</span></div>${densitySvg(row)}</div><div class="c2-cell"><div class="c2-cell-title"><b>${row.title}</b><span>${row.note}</span></div>${boxplotSvg(row)}</div></div>`).join('')}</div><div class="c2-note">Les trois lignes sont alignées deux à deux : Date face à Date, Poids face à Poids, Taille face à Taille.</div></article>`;
 }
 function renderLegend(tickets) {
   const clusters = countBy(tickets.map((ticket) => ticket.cluster));
@@ -240,11 +208,7 @@ function pcaStats(tickets) {
   const weights = tickets.map((ticket) => ticket.weight).filter(Number.isFinite);
   const heights = tickets.map((ticket) => ticket.height).filter(Number.isFinite);
   const mean = { offset: avg(offsets) || 0, weight: avg(weights) || 3.2, height: avg(heights) || 50 };
-  const sd = {
-    offset: Math.sqrt(avg(offsets.map((value) => (value - mean.offset) ** 2)) || 1) || 1,
-    weight: Math.sqrt(avg(weights.map((value) => (value - mean.weight) ** 2)) || 1) || 1,
-    height: Math.sqrt(avg(heights.map((value) => (value - mean.height) ** 2)) || 1) || 1,
-  };
+  const sd = { offset: Math.sqrt(avg(offsets.map((v) => (v - mean.offset) ** 2)) || 1) || 1, weight: Math.sqrt(avg(weights.map((v) => (v - mean.weight) ** 2)) || 1) || 1, height: Math.sqrt(avg(heights.map((v) => (v - mean.height) ** 2)) || 1) || 1 };
   return { mean, sd };
 }
 function getPcaPoint(ticket, stats) {
@@ -261,28 +225,23 @@ function initPca3d(panel, tickets) {
   canvas.dataset.ready = '1';
   const ctx = canvas.getContext('2d');
   const stats = pcaStats(tickets);
-  let rotX = .55, rotY = .72, zoom = 1, auto = true, drag = false, lastX = 0, lastY = 0, projected = [], hover = null;
+  let rotX = .55, rotY = .72, zoom = 1.35, auto = true, drag = false, lastX = 0, lastY = 0, projected = [], hover = null;
   function resize() { const rect = canvas.getBoundingClientRect(); canvas.width = rect.width * devicePixelRatio; canvas.height = rect.height * devicePixelRatio; ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0); }
-  function project(point) { const cy = Math.cos(rotY), sy = Math.sin(rotY), cx = Math.cos(rotX), sx = Math.sin(rotX); let x = point.x * cy - point.z * sy, z = point.x * sy + point.z * cy, y = point.y * cx - z * sx; z = point.y * sx + z * cx; const scale = Math.min(canvas.clientWidth, canvas.clientHeight) * .19 * zoom, perspective = 1 / (2.2 + z * .25); return { x: canvas.clientWidth / 2 + x * scale * perspective, y: canvas.clientHeight / 2 - y * scale * perspective, z, ticket: point.ticket, s: perspective }; }
+  function project(point) { const cy = Math.cos(rotY), sy = Math.sin(rotY), cx = Math.cos(rotX), sx = Math.sin(rotX); let x = point.x * cy - point.z * sy, z = point.x * sy + point.z * cy, y = point.y * cx - z * sx; z = point.y * sx + z * cx; const scale = Math.min(canvas.clientWidth, canvas.clientHeight) * .24 * zoom, perspective = 1 / (2.15 + z * .22); return { x: canvas.clientWidth / 2 + x * scale * perspective, y: canvas.clientHeight / 2 - y * scale * perspective, z, ticket: point.ticket, s: perspective }; }
   function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); }
   function updateHover(clientX, clientY) {
     const rect = canvas.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-    let best = null;
-    let bestDist = 18;
-    projected.forEach((point) => {
-      const dist = Math.hypot(point.x - x, point.y - y);
-      if (dist < bestDist) { best = point; bestDist = dist; }
-    });
+    const x = clientX - rect.left, y = clientY - rect.top;
+    let best = null, bestDist = 20;
+    projected.forEach((point) => { const dist = Math.hypot(point.x - x, point.y - y); if (dist < bestDist) { best = point; bestDist = dist; } });
     hover = best;
-    if (tooltip && hover) tooltip.innerHTML = `<b>${esc(hover.ticket.player)}</b> · ${esc(hover.ticket.date)} · ${esc(hover.ticket.sex)} · ${esc(hover.ticket.weightLabel)} · ${esc(hover.ticket.heightLabel)}<br>${esc(hover.ticket.cluster)}${hover.ticket.note ? ` · message : ${esc(hover.ticket.note)}` : ''}`;
-    else if (tooltip) tooltip.innerHTML = '<b>Lecture</b> · PC1 = tendance date/poids, PC2 = contraste morphologique, PC3 = dispersion résiduelle. Survole un point pour lire le ticket.';
+    if (tooltip && hover) tooltip.innerHTML = `<b>${esc(hover.ticket.player)}</b> · ${esc(hover.ticket.date)} · ${esc(hover.ticket.sex)} · ${esc(hover.ticket.firstName)} · ${esc(hover.ticket.weightLabel)} · ${esc(hover.ticket.heightLabel)}<br>${esc(hover.ticket.cluster)}${hover.ticket.note ? ` · ${esc(hover.ticket.note)}` : ''}`;
+    else if (tooltip) tooltip.innerHTML = '<b>Lecture</b> · Initiales visibles. Survole un point pour afficher le ticket complet.';
   }
   function draw() {
-    const w = canvas.clientWidth, h = canvas.clientHeight; ctx.clearRect(0, 0, w, h);
+    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
     const origin = project({ x: 0, y: 0, z: 0, ticket: null });
-    [{ p: { x: 3.4, y: 0, z: 0, ticket: null }, label: 'PC1 timing/poids', c: COLORS.orange }, { p: { x: 0, y: 3.2, z: 0, ticket: null }, label: 'PC2 morphologie', c: COLORS.blue }, { p: { x: 0, y: 0, z: 3.2, ticket: null }, label: 'PC3 dispersion', c: COLORS.green }].forEach((axis) => { const end = project(axis.p); ctx.strokeStyle = axis.c; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(end.x, end.y); ctx.stroke(); ctx.fillStyle = axis.c; ctx.font = '800 11px system-ui'; ctx.fillText(axis.label, end.x + 6, end.y); });
+    [{ p: { x: 3.4, y: 0, z: 0, ticket: null }, label: 'PC1 timing/poids', c: COLORS.orange }, { p: { x: 0, y: 3.2, z: 0, ticket: null }, label: 'PC2 morphologie', c: COLORS.blue }, { p: { x: 0, y: 0, z: 3.2, ticket: null }, label: 'PC3 dispersion', c: COLORS.green }].forEach((axis) => { const end = project(axis.p); ctx.strokeStyle = axis.c; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(end.x, end.y); ctx.stroke(); ctx.fillStyle = axis.c; ctx.font = '900 12px system-ui'; ctx.fillText(axis.label, end.x + 7, end.y); });
     const centers = {};
     projected = tickets.map((ticket) => getPcaPoint(ticket, stats)).map(project).sort((a, b) => a.z - b.z);
     projected.forEach((point) => {
@@ -290,25 +249,24 @@ function initPca3d(panel, tickets) {
       if (!centers[point.ticket.cluster]) centers[point.ticket.cluster] = { x: 0, y: 0, n: 0, color };
       centers[point.ticket.cluster].x += point.x; centers[point.ticket.cluster].y += point.y; centers[point.ticket.cluster].n += 1;
       const isHover = hover?.ticket?.player === point.ticket.player;
-      const radius = (point.ticket.note ? 8 : 7) * point.s + (isHover ? 5 : 0);
-      ctx.globalAlpha = .14; ctx.fillStyle = color; ctx.beginPath(); ctx.arc(point.x, point.y, (point.ticket.note ? 16 : 12) * point.s + (isHover ? 7 : 0), 0, Math.PI * 2); ctx.fill();
-      ctx.globalAlpha = 1; ctx.fillStyle = color; ctx.strokeStyle = isHover ? '#172b44' : '#fff'; ctx.lineWidth = isHover ? 3 : 2; ctx.beginPath(); ctx.arc(point.x, point.y, radius, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = '#fff'; ctx.font = '900 8px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(initials(point.ticket.player), point.x, point.y + .5);
-      ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      const radius = (point.ticket.note ? 10 : 9) * point.s + (isHover ? 5 : 0);
+      ctx.globalAlpha = .18; ctx.fillStyle = color; ctx.beginPath(); ctx.arc(point.x, point.y, radius + 8, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1; ctx.fillStyle = color; ctx.strokeStyle = isHover ? '#172b44' : '#fff'; ctx.lineWidth = isHover ? 3.5 : 2.2; ctx.beginPath(); ctx.arc(point.x, point.y, radius, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = '900 9px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(initials(point.ticket.player), point.x, point.y + .5); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
     });
-    Object.entries(centers).forEach(([name, center]) => { const x = center.x / center.n, y = center.y / center.n, text = `${name} · ${center.n}`; ctx.font = '900 12px system-ui'; const tw = ctx.measureText(text).width; ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.strokeStyle = '#cbd8e6'; roundRect(x - tw / 2 - 8, y - 36, tw + 16, 22, 7); ctx.fill(); ctx.stroke(); ctx.fillStyle = center.color; ctx.fillText(text, x - tw / 2, y - 21); });
+    Object.entries(centers).forEach(([name, center]) => { const x = center.x / center.n, y = center.y / center.n, text = `${name} · ${center.n}`; ctx.font = '900 12px system-ui'; const tw = ctx.measureText(text).width; ctx.fillStyle = 'rgba(255,255,255,.94)'; ctx.strokeStyle = '#cbd8e6'; roundRect(x - tw / 2 - 8, y - 38, tw + 16, 23, 7); ctx.fill(); ctx.stroke(); ctx.fillStyle = center.color; ctx.fillText(text, x - tw / 2, y - 22); });
     if (auto && !drag) rotY += .004;
     requestAnimationFrame(draw);
   }
   resize(); window.addEventListener('resize', resize);
   wrap.addEventListener('pointerdown', (event) => { drag = true; wrap.classList.add('dragging'); lastX = event.clientX; lastY = event.clientY; wrap.setPointerCapture(event.pointerId); updateHover(event.clientX, event.clientY); });
   wrap.addEventListener('pointermove', (event) => { if (drag) { rotY += (event.clientX - lastX) * .008; rotX += (event.clientY - lastY) * .008; rotX = Math.max(-1.25, Math.min(1.25, rotX)); lastX = event.clientX; lastY = event.clientY; } updateHover(event.clientX, event.clientY); });
-  wrap.addEventListener('pointerleave', () => { hover = null; if (tooltip) tooltip.innerHTML = '<b>Lecture</b> · PC1 = tendance date/poids, PC2 = contraste morphologique, PC3 = dispersion résiduelle. Survole un point pour lire le ticket.'; });
+  wrap.addEventListener('pointerleave', () => { hover = null; if (tooltip) tooltip.innerHTML = '<b>Lecture</b> · Initiales visibles. Survole un point pour afficher le ticket complet.'; });
   wrap.addEventListener('pointerup', () => { drag = false; wrap.classList.remove('dragging'); });
   panel.querySelector('[data-c2-auto]')?.addEventListener('click', (event) => { auto = !auto; event.currentTarget.textContent = auto ? 'Auto' : 'Manuel'; });
-  panel.querySelector('[data-c2-zoom-in]')?.addEventListener('click', () => { zoom = Math.min(1.8, zoom + .12); });
-  panel.querySelector('[data-c2-zoom-out]')?.addEventListener('click', () => { zoom = Math.max(.65, zoom - .12); });
-  panel.querySelector('[data-c2-reset]')?.addEventListener('click', () => { rotX = .55; rotY = .72; zoom = 1; });
+  panel.querySelector('[data-c2-zoom-in]')?.addEventListener('click', () => { zoom = Math.min(2.1, zoom + .12); });
+  panel.querySelector('[data-c2-zoom-out]')?.addEventListener('click', () => { zoom = Math.max(.8, zoom - .12); });
+  panel.querySelector('[data-c2-reset]')?.addEventListener('click', () => { rotX = .55; rotY = .72; zoom = 1.35; });
   draw();
 }
 let lastSignature = '';
@@ -322,7 +280,7 @@ function renderDataLab(tickets) {
   document.querySelector('.data-lab-panel')?.remove();
   const panel = document.createElement('section');
   panel.className = 'data-lab-panel c2';
-  panel.innerHTML = `<div class="panel-title"><span>📊</span><div><h2>Data Lab</h2><p>Distributions et boxplots en miroir, puis ACP 3D.</p></div></div><div class="c2-grid">${card('Distributions date / poids / taille', 'Trois distributions empilées dans la même carte.', stackedDistributions(enriched), 'half')}${card('Boxplots expliqués', 'Trois boxplots empilés dans la carte miroir.', `<div class="c2-boxplot">${boxplotSvg(enriched)}</div>`, 'half')}${card('ACP 3D manipulable', 'Initiales visibles. Survole un point pour afficher le nom complet.', `<div class="c2-canvas-wrap"><div class="c2-toolbar"><button data-c2-auto>Auto</button><button data-c2-zoom-in>Zoom +</button><button data-c2-zoom-out>Zoom -</button><button data-c2-reset>Reset</button></div><canvas id="c2-pca3d"></canvas><div class="c2-tooltip"><b>Lecture</b> · PC1 = tendance date/poids, PC2 = contraste morphologique, PC3 = dispersion résiduelle. Survole un point pour lire le ticket.</div></div><div class="c2-legend">${renderLegend(enriched)}</div>`, 'full')}</div>`;
+  panel.innerHTML = `<div class="panel-title"><span>📊</span><div><h2>Data Lab</h2><p>Grille miroir distributions / boxplots, puis ACP 3D agrandie.</p></div></div><div class="c2-grid">${mirrorViz(enriched)}${card('ACP 3D manipulable', 'Initiales visibles. Survole un point pour afficher le nom complet.', `<div class="c2-canvas-wrap"><div class="c2-toolbar"><button data-c2-auto>Auto</button><button data-c2-zoom-in>Zoom +</button><button data-c2-zoom-out>Zoom -</button><button data-c2-reset>Reset</button></div><canvas id="c2-pca3d"></canvas><div class="c2-tooltip"><b>Lecture</b> · Initiales visibles. Survole un point pour afficher le ticket complet.</div></div><div class="c2-legend">${renderLegend(enriched)}</div>`)}</div>`;
   const admin = document.querySelector('.admin-panel');
   if (admin) admin.insertAdjacentElement('beforebegin', panel);
   else document.querySelector('.app-grid')?.appendChild(panel);
@@ -336,11 +294,7 @@ function enhance() {
   renderDataLab(tickets);
 }
 let scheduled = false;
-function scheduleEnhance() {
-  if (scheduled) return;
-  scheduled = true;
-  requestAnimationFrame(() => { scheduled = false; enhance(); });
-}
+function scheduleEnhance() { if (scheduled) return; scheduled = true; requestAnimationFrame(() => { scheduled = false; enhance(); }); }
 const boot = setInterval(() => { if (document.querySelector('.ticket')) { clearInterval(boot); enhance(); } }, 250);
 setTimeout(() => clearInterval(boot), 10000);
 new MutationObserver(scheduleEnhance).observe(document.getElementById('root') || document.body, { childList: true, subtree: true });
