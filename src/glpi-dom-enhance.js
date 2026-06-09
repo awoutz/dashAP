@@ -44,7 +44,12 @@ function percentile(values, p) {
   const hi = Math.ceil(i);
   return nums[lo] + (nums[hi] - nums[lo]) * (i - lo);
 }
-function format(value, digits = 1) {
+function initials(name) {
+  const parts = normalize(name).replace(/[._-]+/g, ' ').split(/\s+/).filter(Boolean);
+  if (!parts.length) return '•';
+  return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
+}
+function formatValue(value, digits = 1) {
   return value.toLocaleString('fr-FR', { maximumFractionDigits: digits });
 }
 
@@ -133,14 +138,14 @@ function ensureStyle() {
     .message-wall-panel{display:none!important}
     .data-lab-panel.c2{background:#fff!important;border:1px solid #d8e1ec!important;border-radius:10px!important;padding:0!important;box-shadow:0 2px 8px rgba(15,23,42,.06)!important;overflow:hidden!important}
     .data-lab-panel.c2 .panel-title{margin:0!important;padding:12px 14px!important;border-bottom:1px solid #d8e1ec!important;background:linear-gradient(180deg,#fff,#f7f9fc)!important}.data-lab-panel.c2 .panel-title>span{background:#e8f2ff!important;color:#24548d!important;border-radius:7px!important}.data-lab-panel.c2 .panel-title h2{color:#22364d!important;font-size:18px!important}.data-lab-panel.c2 .panel-title p{color:#66788f!important;font-size:12px!important}
-    .c2-grid{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important;padding:12px!important;background:#f2f5f9!important;align-items:start!important}
-    .c2-card{background:#fff!important;border:1px solid #d8e1ec!important;border-radius:9px!important;padding:12px!important;min-width:0!important}.c2-card.full{grid-column:1/-1!important}.c2-card.half{grid-column:auto!important}
+    .c2-grid{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important;padding:12px!important;background:#f2f5f9!important;align-items:stretch!important}
+    .c2-card{background:#fff!important;border:1px solid #d8e1ec!important;border-radius:9px!important;padding:12px!important;min-width:0!important}.c2-card.full{grid-column:1/-1!important}.c2-card.half{grid-column:auto!important;min-height:632px!important;display:flex!important;flex-direction:column!important}
     .c2-head{display:flex!important;justify-content:space-between!important;gap:10px!important;align-items:flex-start!important;margin-bottom:10px!important}.c2-head b{display:block!important;color:#22364d!important;font-size:14px!important;font-weight:900!important;line-height:1.1!important}.c2-head span{display:block!important;color:#6b7a90!important;font-size:11px!important;margin-top:2px!important;line-height:1.25!important}
-    .c2-stack{display:grid!important;gap:10px!important}.c2-density-row{display:block!important;border:1px solid #d8e1ec!important;border-radius:8px!important;background:#fbfcfe!important;padding:8px!important}.c2-density-label{margin-bottom:2px!important}.c2-density-label b{display:block!important;font-size:13px!important;color:#22364d!important}.c2-density-label span{display:block!important;margin-top:2px!important;font-size:10px!important;color:#66788f!important}.c2-density-row svg{width:100%!important;height:132px!important;display:block!important}
-    .c2-boxplot svg{width:100%!important;height:430px!important;display:block!important}.c2-note{font-size:11px!important;color:#66788f!important;line-height:1.35!important;margin-top:8px!important}.empty-mini{display:grid!important;place-items:center!important;min-height:80px!important;border:1px dashed #cbd5e1!important;border-radius:8px!important;color:#64748b!important;font-size:12px!important;background:#fbfcfe!important}
+    .c2-stack{display:grid!important;grid-template-rows:repeat(3,1fr)!important;gap:10px!important;flex:1 1 auto!important}.c2-density-row{display:grid!important;grid-template-rows:auto 1fr!important;border:1px solid #d8e1ec!important;border-radius:8px!important;background:#fbfcfe!important;padding:8px!important;min-height:166px!important}.c2-density-label{margin-bottom:2px!important}.c2-density-label b{display:block!important;font-size:13px!important;color:#22364d!important}.c2-density-label span{display:block!important;margin-top:2px!important;font-size:10px!important;color:#66788f!important}.c2-density-row svg{width:100%!important;height:128px!important;display:block!important;align-self:end!important}
+    .c2-boxplot{flex:1 1 auto!important;display:flex!important;flex-direction:column!important}.c2-boxplot svg{width:100%!important;height:540px!important;display:block!important;flex:1 1 auto!important}.c2-note{font-size:11px!important;color:#66788f!important;line-height:1.35!important;margin-top:8px!important}.empty-mini{display:grid!important;place-items:center!important;min-height:80px!important;border:1px dashed #cbd5e1!important;border-radius:8px!important;color:#64748b!important;font-size:12px!important;background:#fbfcfe!important}
     .c2-canvas-wrap{position:relative!important;border:1px solid #d8e1ec!important;border-radius:9px!important;background:radial-gradient(circle at 50% 45%,#fff,#f2f6fb)!important;height:460px!important;overflow:hidden!important;touch-action:none!important}.c2-canvas-wrap canvas{width:100%!important;height:460px!important;display:block!important;cursor:grab!important}.c2-canvas-wrap.dragging canvas{cursor:grabbing!important}.c2-toolbar{position:absolute!important;z-index:3!important;top:9px!important;left:9px!important;display:flex!important;gap:6px!important}.c2-toolbar button{border:1px solid #cbd8e6!important;background:#fff!important;color:#24548d!important;border-radius:7px!important;padding:5px 8px!important;font-size:11px!important;font-weight:900!important;cursor:pointer!important}.c2-tooltip{position:absolute!important;left:9px!important;right:9px!important;bottom:9px!important;border:1px solid rgba(203,216,230,.92)!important;background:rgba(255,255,255,.92)!important;backdrop-filter:blur(8px)!important;border-radius:8px!important;padding:8px!important;font-size:11px!important;color:#66788f!important}.c2-tooltip b{color:#22364d!important}
     .c2-legend{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;margin-top:9px!important}.c2-leg{border:1px solid #d8e1ec!important;border-radius:8px!important;background:#fff!important;padding:8px!important}.c2-leg h3{display:flex!important;align-items:center!important;gap:7px!important;margin:0!important;font-size:11px!important;color:#22364d!important}.c2-leg-dot{width:10px!important;height:10px!important;border-radius:999px!important;display:inline-block!important}.c2-leg p{margin:5px 0 0!important;color:#66788f!important;font-size:10px!important;line-height:1.2!important}.c2-leg b{margin-left:auto!important;color:#24548d!important}
-    @media(max-width:1100px){.c2-grid{grid-template-columns:1fr!important}.c2-card.half{grid-column:auto!important}.c2-legend{grid-template-columns:1fr 1fr!important}}
+    @media(max-width:1100px){.c2-grid{grid-template-columns:1fr!important}.c2-card.half{grid-column:auto!important;min-height:0!important}.c2-legend{grid-template-columns:1fr 1fr!important}}
     @media(max-width:680px){.c2-grid{padding:8px!important;gap:8px!important}.c2-card{padding:9px!important}.c2-canvas-wrap,.c2-canvas-wrap canvas{height:360px!important}.c2-legend{grid-template-columns:1fr!important}}
   `;
   document.head.appendChild(style);
@@ -164,19 +169,19 @@ function densitySvg(tickets, type) {
     bins[index] += 1;
   });
   const maxBin = Math.max(1, ...bins);
-  const x0 = 44;
-  const y = 72;
-  const width = 650;
+  const x0 = 58;
+  const y = 86;
+  const width = 640;
   let top = '';
   let bottom = '';
   bins.forEach((count, index) => {
     const x = x0 + index * width / 21;
-    const height = 5 + (count / maxBin) * 40;
+    const height = 5 + (count / maxBin) * 48;
     top += `${index ? 'L' : 'M'}${x},${y - height}`;
     bottom = `L${x},${y + height}` + bottom;
   });
   let dots = '';
-  values.slice(0, 80).forEach((value, index) => {
+  values.slice(0, 90).forEach((value, index) => {
     const x = x0 + ((value - min) / Math.max(1, max - min)) * width;
     const yy = y + ((index % 5) - 2) * 7;
     dots += `<circle cx="${x}" cy="${yy}" r="3" fill="${color}" fill-opacity=".55"/>`;
@@ -186,10 +191,10 @@ function densitySvg(tickets, type) {
     const value = min + (max - min) * index / 4;
     const x = x0 + index * width / 4;
     const label = isDate ? `J${Math.round(value) > 0 ? '+' : ''}${Math.round(value)}` : `${value.toLocaleString('fr-FR', { maximumFractionDigits: isWeight ? 1 : 0 })}${unit}`;
-    ticks += `<line x1="${x}" y1="118" x2="${x}" y2="124" stroke="#9eb1c7"/><text x="${x}" y="140" text-anchor="middle" fill="#66788f" font-size="10">${label}</text>`;
+    ticks += `<line x1="${x}" y1="132" x2="${x}" y2="138" stroke="#9eb1c7"/><text x="${x}" y="154" text-anchor="middle" fill="#66788f" font-size="10">${label}</text>`;
   }
-  const termLine = isDate && min <= 0 && max >= 0 ? `<line x1="${x0 + ((0 - min) / (max - min)) * width}" y1="24" x2="${x0 + ((0 - min) / (max - min)) * width}" y2="118" stroke="${COLORS.orange}" stroke-width="2" stroke-dasharray="5 4"/><text x="${x0 + ((0 - min) / (max - min)) * width + 6}" y="36" fill="${COLORS.orange}" font-size="10" font-weight="900">TERME</text>` : '';
-  return `<svg viewBox="0 0 740 150"><path d="${top} ${bottom} Z" fill="${color}" fill-opacity=".24" stroke="${color}" stroke-width="2"/>${dots}${termLine}<line x1="${x0}" y1="118" x2="${x0 + width}" y2="118" stroke="#9eb1c7"/>${ticks}</svg>`;
+  const termLine = isDate && min <= 0 && max >= 0 ? `<line x1="${x0 + ((0 - min) / (max - min)) * width}" y1="28" x2="${x0 + ((0 - min) / (max - min)) * width}" y2="132" stroke="${COLORS.orange}" stroke-width="2" stroke-dasharray="5 4"/><text x="${x0 + ((0 - min) / (max - min)) * width + 6}" y="40" fill="${COLORS.orange}" font-size="10" font-weight="900">TERME</text>` : '';
+  return `<svg viewBox="0 0 740 164"><path d="${top} ${bottom} Z" fill="${color}" fill-opacity=".24" stroke="${color}" stroke-width="2"/>${dots}${termLine}<line x1="${x0}" y1="132" x2="${x0 + width}" y2="132" stroke="#9eb1c7"/>${ticks}</svg>`;
 }
 function stackedDistributions(tickets) {
   const items = [
@@ -205,12 +210,13 @@ function boxplotSvg(tickets) {
     { label: 'Poids', values: tickets.map((ticket) => ticket.weight).filter(Number.isFinite), min: 2.3, max: 4.6, color: COLORS.green, unit: 'kg', digits: 1 },
     { label: 'Taille', values: tickets.map((ticket) => ticket.height).filter(Number.isFinite), min: 44, max: 56, color: COLORS.blue, unit: 'cm', digits: 0 },
   ];
-  let svg = '<svg viewBox="0 0 560 430">';
+  let svg = '<svg viewBox="0 0 740 540">';
   sets.forEach((set, index) => {
     if (!set.values.length) return;
-    const y = 75 + index * 116;
+    const rowTop = 24 + index * 168;
+    const y = rowTop + 78;
     const x0 = 92;
-    const x1 = 510;
+    const x1 = 700;
     const map = (value) => x0 + ((value - set.min) / (set.max - set.min)) * (x1 - x0);
     const q1 = percentile(set.values, .25);
     const med = percentile(set.values, .5);
@@ -218,7 +224,7 @@ function boxplotSvg(tickets) {
     const mn = Math.min(...set.values);
     const mx = Math.max(...set.values);
     const formatter = (value) => value.toLocaleString('fr-FR', { maximumFractionDigits: set.digits });
-    svg += `<text x="18" y="${y - 34}" fill="#24364a" font-size="13" font-weight="900">${set.label}</text><line x1="${x0}" y1="${y + 36}" x2="${x1}" y2="${y + 36}" stroke="#dbe4ee"/><text x="${x0}" y="${y + 58}" fill="#66788f" font-size="10" text-anchor="middle">${formatter(set.min)}${set.unit}</text><text x="${x1}" y="${y + 58}" fill="#66788f" font-size="10" text-anchor="middle">${formatter(set.max)}${set.unit}</text><line x1="${map(mn)}" y1="${y}" x2="${map(mx)}" y2="${y}" stroke="#9eb1c7" stroke-width="2"/><rect x="${map(q1)}" y="${y - 18}" width="${Math.max(2, map(q3) - map(q1))}" height="36" rx="8" fill="${set.color}" fill-opacity=".18" stroke="${set.color}" stroke-width="2"/><line x1="${map(med)}" y1="${y - 24}" x2="${map(med)}" y2="${y + 24}" stroke="${set.color}" stroke-width="3"/><circle cx="${map(mn)}" cy="${y}" r="5" fill="${set.color}"/><circle cx="${map(mx)}" cy="${y}" r="5" fill="${set.color}"/><text x="${map(med) + 8}" y="${y - 28}" fill="${set.color}" font-size="10" font-weight="900">médiane ${formatter(med)}${set.unit}</text>`;
+    svg += `<text x="18" y="${rowTop + 22}" fill="#24364a" font-size="13" font-weight="900">${set.label}</text><line x1="${x0}" y1="${y + 46}" x2="${x1}" y2="${y + 46}" stroke="#dbe4ee"/><text x="${x0}" y="${y + 68}" fill="#66788f" font-size="10" text-anchor="middle">${formatter(set.min)}${set.unit}</text><text x="${x1}" y="${y + 68}" fill="#66788f" font-size="10" text-anchor="middle">${formatter(set.max)}${set.unit}</text><line x1="${map(mn)}" y1="${y}" x2="${map(mx)}" y2="${y}" stroke="#9eb1c7" stroke-width="2"/><rect x="${map(q1)}" y="${y - 18}" width="${Math.max(2, map(q3) - map(q1))}" height="36" rx="8" fill="${set.color}" fill-opacity=".18" stroke="${set.color}" stroke-width="2"/><line x1="${map(med)}" y1="${y - 28}" x2="${map(med)}" y2="${y + 28}" stroke="${set.color}" stroke-width="3"/><circle cx="${map(mn)}" cy="${y}" r="5" fill="${set.color}"/><circle cx="${map(mx)}" cy="${y}" r="5" fill="${set.color}"/><text x="${map(med) + 8}" y="${y - 34}" fill="${set.color}" font-size="10" font-weight="900">médiane ${formatter(med)}${set.unit}</text>`;
   });
   return `${svg}</svg><div class="c2-note">Le rectangle = 50% des paris. Le trait = médiane. Les points = minimum / maximum.</div>`;
 }
@@ -250,27 +256,54 @@ function getPcaPoint(ticket, stats) {
 function initPca3d(panel, tickets) {
   const wrap = panel.querySelector('.c2-canvas-wrap');
   const canvas = panel.querySelector('#c2-pca3d');
+  const tooltip = panel.querySelector('.c2-tooltip');
   if (!wrap || !canvas || canvas.dataset.ready === '1') return;
   canvas.dataset.ready = '1';
   const ctx = canvas.getContext('2d');
   const stats = pcaStats(tickets);
-  let rotX = .55, rotY = .72, zoom = 1, auto = true, drag = false, lastX = 0, lastY = 0;
+  let rotX = .55, rotY = .72, zoom = 1, auto = true, drag = false, lastX = 0, lastY = 0, projected = [], hover = null;
   function resize() { const rect = canvas.getBoundingClientRect(); canvas.width = rect.width * devicePixelRatio; canvas.height = rect.height * devicePixelRatio; ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0); }
   function project(point) { const cy = Math.cos(rotY), sy = Math.sin(rotY), cx = Math.cos(rotX), sx = Math.sin(rotX); let x = point.x * cy - point.z * sy, z = point.x * sy + point.z * cy, y = point.y * cx - z * sx; z = point.y * sx + z * cx; const scale = Math.min(canvas.clientWidth, canvas.clientHeight) * .19 * zoom, perspective = 1 / (2.2 + z * .25); return { x: canvas.clientWidth / 2 + x * scale * perspective, y: canvas.clientHeight / 2 - y * scale * perspective, z, ticket: point.ticket, s: perspective }; }
   function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); }
+  function updateHover(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    let best = null;
+    let bestDist = 18;
+    projected.forEach((point) => {
+      const dist = Math.hypot(point.x - x, point.y - y);
+      if (dist < bestDist) { best = point; bestDist = dist; }
+    });
+    hover = best;
+    if (tooltip && hover) tooltip.innerHTML = `<b>${esc(hover.ticket.player)}</b> · ${esc(hover.ticket.date)} · ${esc(hover.ticket.sex)} · ${esc(hover.ticket.weightLabel)} · ${esc(hover.ticket.heightLabel)}<br>${esc(hover.ticket.cluster)}${hover.ticket.note ? ` · message : ${esc(hover.ticket.note)}` : ''}`;
+    else if (tooltip) tooltip.innerHTML = '<b>Lecture</b> · PC1 = tendance date/poids, PC2 = contraste morphologique, PC3 = dispersion résiduelle. Survole un point pour lire le ticket.';
+  }
   function draw() {
     const w = canvas.clientWidth, h = canvas.clientHeight; ctx.clearRect(0, 0, w, h);
     const origin = project({ x: 0, y: 0, z: 0, ticket: null });
     [{ p: { x: 3.4, y: 0, z: 0, ticket: null }, label: 'PC1 timing/poids', c: COLORS.orange }, { p: { x: 0, y: 3.2, z: 0, ticket: null }, label: 'PC2 morphologie', c: COLORS.blue }, { p: { x: 0, y: 0, z: 3.2, ticket: null }, label: 'PC3 dispersion', c: COLORS.green }].forEach((axis) => { const end = project(axis.p); ctx.strokeStyle = axis.c; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(end.x, end.y); ctx.stroke(); ctx.fillStyle = axis.c; ctx.font = '800 11px system-ui'; ctx.fillText(axis.label, end.x + 6, end.y); });
     const centers = {};
-    tickets.map((ticket) => getPcaPoint(ticket, stats)).map(project).sort((a, b) => a.z - b.z).forEach((point) => { const color = CLUSTERS[point.ticket.cluster]?.color || COLORS.blue; if (!centers[point.ticket.cluster]) centers[point.ticket.cluster] = { x: 0, y: 0, n: 0, color }; centers[point.ticket.cluster].x += point.x; centers[point.ticket.cluster].y += point.y; centers[point.ticket.cluster].n += 1; ctx.globalAlpha = .14; ctx.fillStyle = color; ctx.beginPath(); ctx.arc(point.x, point.y, (point.ticket.note ? 16 : 12) * point.s, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; ctx.fillStyle = color; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(point.x, point.y, (point.ticket.note ? 7 : 5) * point.s, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); });
+    projected = tickets.map((ticket) => getPcaPoint(ticket, stats)).map(project).sort((a, b) => a.z - b.z);
+    projected.forEach((point) => {
+      const color = CLUSTERS[point.ticket.cluster]?.color || COLORS.blue;
+      if (!centers[point.ticket.cluster]) centers[point.ticket.cluster] = { x: 0, y: 0, n: 0, color };
+      centers[point.ticket.cluster].x += point.x; centers[point.ticket.cluster].y += point.y; centers[point.ticket.cluster].n += 1;
+      const isHover = hover?.ticket?.player === point.ticket.player;
+      const radius = (point.ticket.note ? 8 : 7) * point.s + (isHover ? 5 : 0);
+      ctx.globalAlpha = .14; ctx.fillStyle = color; ctx.beginPath(); ctx.arc(point.x, point.y, (point.ticket.note ? 16 : 12) * point.s + (isHover ? 7 : 0), 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1; ctx.fillStyle = color; ctx.strokeStyle = isHover ? '#172b44' : '#fff'; ctx.lineWidth = isHover ? 3 : 2; ctx.beginPath(); ctx.arc(point.x, point.y, radius, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = '900 8px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(initials(point.ticket.player), point.x, point.y + .5);
+      ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    });
     Object.entries(centers).forEach(([name, center]) => { const x = center.x / center.n, y = center.y / center.n, text = `${name} · ${center.n}`; ctx.font = '900 12px system-ui'; const tw = ctx.measureText(text).width; ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.strokeStyle = '#cbd8e6'; roundRect(x - tw / 2 - 8, y - 36, tw + 16, 22, 7); ctx.fill(); ctx.stroke(); ctx.fillStyle = center.color; ctx.fillText(text, x - tw / 2, y - 21); });
     if (auto && !drag) rotY += .004;
     requestAnimationFrame(draw);
   }
   resize(); window.addEventListener('resize', resize);
-  wrap.addEventListener('pointerdown', (event) => { drag = true; wrap.classList.add('dragging'); lastX = event.clientX; lastY = event.clientY; wrap.setPointerCapture(event.pointerId); });
-  wrap.addEventListener('pointermove', (event) => { if (!drag) return; rotY += (event.clientX - lastX) * .008; rotX += (event.clientY - lastY) * .008; rotX = Math.max(-1.25, Math.min(1.25, rotX)); lastX = event.clientX; lastY = event.clientY; });
+  wrap.addEventListener('pointerdown', (event) => { drag = true; wrap.classList.add('dragging'); lastX = event.clientX; lastY = event.clientY; wrap.setPointerCapture(event.pointerId); updateHover(event.clientX, event.clientY); });
+  wrap.addEventListener('pointermove', (event) => { if (drag) { rotY += (event.clientX - lastX) * .008; rotX += (event.clientY - lastY) * .008; rotX = Math.max(-1.25, Math.min(1.25, rotX)); lastX = event.clientX; lastY = event.clientY; } updateHover(event.clientX, event.clientY); });
+  wrap.addEventListener('pointerleave', () => { hover = null; if (tooltip) tooltip.innerHTML = '<b>Lecture</b> · PC1 = tendance date/poids, PC2 = contraste morphologique, PC3 = dispersion résiduelle. Survole un point pour lire le ticket.'; });
   wrap.addEventListener('pointerup', () => { drag = false; wrap.classList.remove('dragging'); });
   panel.querySelector('[data-c2-auto]')?.addEventListener('click', (event) => { auto = !auto; event.currentTarget.textContent = auto ? 'Auto' : 'Manuel'; });
   panel.querySelector('[data-c2-zoom-in]')?.addEventListener('click', () => { zoom = Math.min(1.8, zoom + .12); });
@@ -289,7 +322,7 @@ function renderDataLab(tickets) {
   document.querySelector('.data-lab-panel')?.remove();
   const panel = document.createElement('section');
   panel.className = 'data-lab-panel c2';
-  panel.innerHTML = `<div class="panel-title"><span>📊</span><div><h2>Data Lab</h2><p>Distributions et boxplots en miroir, puis ACP 3D.</p></div></div><div class="c2-grid">${card('Distributions date / poids / taille', 'Trois distributions empilées dans la même carte.', stackedDistributions(enriched), 'half')}${card('Boxplots expliqués', 'Trois boxplots empilés dans la carte miroir.', `<div class="c2-boxplot">${boxplotSvg(enriched)}</div>`, 'half')}${card('ACP 3D manipulable', 'Drag souris/doigt pour tourner. Couleur = cluster, taille = message laissé.', `<div class="c2-canvas-wrap"><div class="c2-toolbar"><button data-c2-auto>Auto</button><button data-c2-zoom-in>Zoom +</button><button data-c2-zoom-out>Zoom -</button><button data-c2-reset>Reset</button></div><canvas id="c2-pca3d"></canvas><div class="c2-tooltip"><b>Lecture</b> · PC1 = tendance date/poids, PC2 = contraste morphologique, PC3 = dispersion résiduelle.</div></div><div class="c2-legend">${renderLegend(enriched)}</div>`, 'full')}</div>`;
+  panel.innerHTML = `<div class="panel-title"><span>📊</span><div><h2>Data Lab</h2><p>Distributions et boxplots en miroir, puis ACP 3D.</p></div></div><div class="c2-grid">${card('Distributions date / poids / taille', 'Trois distributions empilées dans la même carte.', stackedDistributions(enriched), 'half')}${card('Boxplots expliqués', 'Trois boxplots empilés dans la carte miroir.', `<div class="c2-boxplot">${boxplotSvg(enriched)}</div>`, 'half')}${card('ACP 3D manipulable', 'Initiales visibles. Survole un point pour afficher le nom complet.', `<div class="c2-canvas-wrap"><div class="c2-toolbar"><button data-c2-auto>Auto</button><button data-c2-zoom-in>Zoom +</button><button data-c2-zoom-out>Zoom -</button><button data-c2-reset>Reset</button></div><canvas id="c2-pca3d"></canvas><div class="c2-tooltip"><b>Lecture</b> · PC1 = tendance date/poids, PC2 = contraste morphologique, PC3 = dispersion résiduelle. Survole un point pour lire le ticket.</div></div><div class="c2-legend">${renderLegend(enriched)}</div>`, 'full')}</div>`;
   const admin = document.querySelector('.admin-panel');
   if (admin) admin.insertAdjacentElement('beforebegin', panel);
   else document.querySelector('.app-grid')?.appendChild(panel);
