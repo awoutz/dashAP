@@ -44,9 +44,10 @@ function percentile(values, p) {
   const hi = Math.ceil(i);
   return nums[lo] + (nums[hi] - nums[lo]) * (i - lo);
 }
-function formatNumber(value, digits = 1) {
+function format(value, digits = 1) {
   return value.toLocaleString('fr-FR', { maximumFractionDigits: digits });
 }
+
 function readMessages() {
   const messages = new Map();
   document.querySelectorAll('.message-card').forEach((card) => {
@@ -77,6 +78,7 @@ function readTickets() {
     };
   }).filter((ticket) => ticket.player);
 }
+
 function clusterOf(ticket) {
   const diff = dayDiff(ticket.date);
   if (diff <= -4) return 'Les pressés';
@@ -103,9 +105,9 @@ function renderTicketTags(tickets) {
     oldPrediction.style.display = 'none';
     if (oldFacts) oldFacts.style.display = 'none';
     ticket.node.querySelector('.ticket-tags-main')?.remove();
+    const sexIcon = ticket.sex === 'Fille' ? '🎀' : ticket.sex === 'Garçon' ? '🧢' : '🎁';
     const tags = document.createElement('div');
     tags.className = 'ticket-tags ticket-tags-main';
-    const sexIcon = ticket.sex === 'Fille' ? '🎀' : ticket.sex === 'Garçon' ? '🧢' : '🎁';
     tags.innerHTML = `<span class="ticket-tag tag-date">📅 ${esc(ticket.date || '—')}</span><span class="ticket-tag tag-sex">${sexIcon} ${esc(ticket.sex || '—')}</span><span class="ticket-tag tag-name">✨ ${esc(ticket.firstName || 'Prénom mystère')}</span><span class="ticket-tag tag-weight">⚖️ ${esc(ticket.weightLabel || '—')}</span><span class="ticket-tag tag-height">📏 ${esc(ticket.heightLabel || '—')}</span>`;
     ticket.node.querySelector('.ticket-top')?.insertAdjacentElement('afterend', tags);
   });
@@ -130,17 +132,15 @@ function ensureStyle() {
   style.textContent = `
     .message-wall-panel{display:none!important}
     .data-lab-panel.c2{background:#fff!important;border:1px solid #d8e1ec!important;border-radius:10px!important;padding:0!important;box-shadow:0 2px 8px rgba(15,23,42,.06)!important;overflow:hidden!important}
-    .data-lab-panel.c2 .panel-title{margin:0!important;padding:12px 14px!important;border-bottom:1px solid #d8e1ec!important;background:linear-gradient(180deg,#fff,#f7f9fc)!important}
-    .data-lab-panel.c2 .panel-title>span{background:#e8f2ff!important;color:#24548d!important;border-radius:7px!important}
-    .data-lab-panel.c2 .panel-title h2{color:#22364d!important;font-size:18px!important}.data-lab-panel.c2 .panel-title p{color:#66788f!important;font-size:12px!important}
-    .c2-grid{display:grid!important;grid-template-columns:1.12fr .88fr!important;gap:10px!important;padding:12px!important;background:#f2f5f9!important}
-    .c2-card{background:#fff!important;border:1px solid #d8e1ec!important;border-radius:9px!important;padding:12px!important;min-width:0!important}.c2-card.full{grid-column:1/-1!important}
+    .data-lab-panel.c2 .panel-title{margin:0!important;padding:12px 14px!important;border-bottom:1px solid #d8e1ec!important;background:linear-gradient(180deg,#fff,#f7f9fc)!important}.data-lab-panel.c2 .panel-title>span{background:#e8f2ff!important;color:#24548d!important;border-radius:7px!important}.data-lab-panel.c2 .panel-title h2{color:#22364d!important;font-size:18px!important}.data-lab-panel.c2 .panel-title p{color:#66788f!important;font-size:12px!important}
+    .c2-grid{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important;padding:12px!important;background:#f2f5f9!important;align-items:start!important}
+    .c2-card{background:#fff!important;border:1px solid #d8e1ec!important;border-radius:9px!important;padding:12px!important;min-width:0!important}.c2-card.full{grid-column:1/-1!important}.c2-card.half{grid-column:auto!important}
     .c2-head{display:flex!important;justify-content:space-between!important;gap:10px!important;align-items:flex-start!important;margin-bottom:10px!important}.c2-head b{display:block!important;color:#22364d!important;font-size:14px!important;font-weight:900!important;line-height:1.1!important}.c2-head span{display:block!important;color:#6b7a90!important;font-size:11px!important;margin-top:2px!important;line-height:1.25!important}
-    .c2-stack{display:grid!important;gap:12px!important}.c2-density-row{display:grid!important;grid-template-columns:74px 1fr!important;gap:10px!important;align-items:center!important;border:1px solid #d8e1ec!important;border-radius:8px!important;background:#fbfcfe!important;padding:8px!important}.c2-density-label b{display:block!important;font-size:13px!important;color:#22364d!important}.c2-density-label span{display:block!important;margin-top:3px!important;font-size:10px!important;color:#66788f!important}.c2-density-row svg{width:100%!important;height:auto!important;display:block!important}
+    .c2-stack{display:grid!important;gap:10px!important}.c2-density-row{display:block!important;border:1px solid #d8e1ec!important;border-radius:8px!important;background:#fbfcfe!important;padding:8px!important}.c2-density-label{margin-bottom:2px!important}.c2-density-label b{display:block!important;font-size:13px!important;color:#22364d!important}.c2-density-label span{display:block!important;margin-top:2px!important;font-size:10px!important;color:#66788f!important}.c2-density-row svg{width:100%!important;height:132px!important;display:block!important}
+    .c2-boxplot svg{width:100%!important;height:430px!important;display:block!important}.c2-note{font-size:11px!important;color:#66788f!important;line-height:1.35!important;margin-top:8px!important}.empty-mini{display:grid!important;place-items:center!important;min-height:80px!important;border:1px dashed #cbd5e1!important;border-radius:8px!important;color:#64748b!important;font-size:12px!important;background:#fbfcfe!important}
     .c2-canvas-wrap{position:relative!important;border:1px solid #d8e1ec!important;border-radius:9px!important;background:radial-gradient(circle at 50% 45%,#fff,#f2f6fb)!important;height:460px!important;overflow:hidden!important;touch-action:none!important}.c2-canvas-wrap canvas{width:100%!important;height:460px!important;display:block!important;cursor:grab!important}.c2-canvas-wrap.dragging canvas{cursor:grabbing!important}.c2-toolbar{position:absolute!important;z-index:3!important;top:9px!important;left:9px!important;display:flex!important;gap:6px!important}.c2-toolbar button{border:1px solid #cbd8e6!important;background:#fff!important;color:#24548d!important;border-radius:7px!important;padding:5px 8px!important;font-size:11px!important;font-weight:900!important;cursor:pointer!important}.c2-tooltip{position:absolute!important;left:9px!important;right:9px!important;bottom:9px!important;border:1px solid rgba(203,216,230,.92)!important;background:rgba(255,255,255,.92)!important;backdrop-filter:blur(8px)!important;border-radius:8px!important;padding:8px!important;font-size:11px!important;color:#66788f!important}.c2-tooltip b{color:#22364d!important}
     .c2-legend{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;margin-top:9px!important}.c2-leg{border:1px solid #d8e1ec!important;border-radius:8px!important;background:#fff!important;padding:8px!important}.c2-leg h3{display:flex!important;align-items:center!important;gap:7px!important;margin:0!important;font-size:11px!important;color:#22364d!important}.c2-leg-dot{width:10px!important;height:10px!important;border-radius:999px!important;display:inline-block!important}.c2-leg p{margin:5px 0 0!important;color:#66788f!important;font-size:10px!important;line-height:1.2!important}.c2-leg b{margin-left:auto!important;color:#24548d!important}
-    .c2-boxplot svg{width:100%!important;height:auto!important;display:block!important}.c2-note{font-size:11px!important;color:#66788f!important;line-height:1.35!important;margin-top:8px!important}.empty-mini{display:grid!important;place-items:center!important;min-height:80px!important;border:1px dashed #cbd5e1!important;border-radius:8px!important;color:#64748b!important;font-size:12px!important;background:#fbfcfe!important}
-    @media(max-width:1100px){.c2-grid{grid-template-columns:1fr!important}.c2-card.full{grid-column:auto!important}.c2-legend{grid-template-columns:1fr 1fr!important}.c2-density-row{grid-template-columns:1fr!important}}
+    @media(max-width:1100px){.c2-grid{grid-template-columns:1fr!important}.c2-card.half{grid-column:auto!important}.c2-legend{grid-template-columns:1fr 1fr!important}}
     @media(max-width:680px){.c2-grid{padding:8px!important;gap:8px!important}.c2-card{padding:9px!important}.c2-canvas-wrap,.c2-canvas-wrap canvas{height:360px!important}.c2-legend{grid-template-columns:1fr!important}}
   `;
   document.head.appendChild(style);
@@ -154,8 +154,8 @@ function densitySvg(tickets, type) {
   const isWeight = type === 'weight';
   const values = tickets.map((ticket) => isDate ? dayDiff(ticket.date) : isWeight ? ticket.weight : ticket.height).filter(Number.isFinite);
   if (!values.length) return '<div class="empty-mini">Pas encore assez de valeurs.</div>';
-  let min = isDate ? Math.min(-12, Math.min(...values)) : isWeight ? 2.3 : 44;
-  let max = isDate ? Math.max(14, Math.max(...values)) : isWeight ? 4.6 : 56;
+  const min = isDate ? Math.min(-12, Math.min(...values)) : isWeight ? 2.3 : 44;
+  const max = isDate ? Math.max(14, Math.max(...values)) : isWeight ? 4.6 : 56;
   const color = isDate ? COLORS.orange : isWeight ? COLORS.green : COLORS.blue;
   const unit = isDate ? 'j' : isWeight ? 'kg' : 'cm';
   const bins = Array.from({ length: 22 }, () => 0);
@@ -165,32 +165,31 @@ function densitySvg(tickets, type) {
   });
   const maxBin = Math.max(1, ...bins);
   const x0 = 44;
-  const y = 118;
+  const y = 72;
   const width = 650;
   let top = '';
   let bottom = '';
   bins.forEach((count, index) => {
     const x = x0 + index * width / 21;
-    const height = 6 + (count / maxBin) * 62;
+    const height = 5 + (count / maxBin) * 40;
     top += `${index ? 'L' : 'M'}${x},${y - height}`;
     bottom = `L${x},${y + height}` + bottom;
   });
-  const maxDots = 90;
   let dots = '';
-  values.slice(0, maxDots).forEach((value, index) => {
+  values.slice(0, 80).forEach((value, index) => {
     const x = x0 + ((value - min) / Math.max(1, max - min)) * width;
-    const yy = y + ((index % 7) - 3) * 9;
-    dots += `<circle cx="${x}" cy="${yy}" r="3.2" fill="${color}" fill-opacity=".55"/>`;
+    const yy = y + ((index % 5) - 2) * 7;
+    dots += `<circle cx="${x}" cy="${yy}" r="3" fill="${color}" fill-opacity=".55"/>`;
   });
   let ticks = '';
   for (let index = 0; index <= 4; index += 1) {
     const value = min + (max - min) * index / 4;
     const x = x0 + index * width / 4;
-    let label = isDate ? `J${Math.round(value) > 0 ? '+' : ''}${Math.round(value)}` : `${value.toLocaleString('fr-FR', { maximumFractionDigits: isWeight ? 1 : 0 })}${unit}`;
-    ticks += `<line x1="${x}" y1="202" x2="${x}" y2="208" stroke="#9eb1c7"/><text x="${x}" y="225" text-anchor="middle" fill="#66788f" font-size="10">${label}</text>`;
+    const label = isDate ? `J${Math.round(value) > 0 ? '+' : ''}${Math.round(value)}` : `${value.toLocaleString('fr-FR', { maximumFractionDigits: isWeight ? 1 : 0 })}${unit}`;
+    ticks += `<line x1="${x}" y1="118" x2="${x}" y2="124" stroke="#9eb1c7"/><text x="${x}" y="140" text-anchor="middle" fill="#66788f" font-size="10">${label}</text>`;
   }
-  const termLine = isDate && min <= 0 && max >= 0 ? `<line x1="${x0 + ((0 - min) / (max - min)) * width}" y1="42" x2="${x0 + ((0 - min) / (max - min)) * width}" y2="202" stroke="${COLORS.orange}" stroke-width="2" stroke-dasharray="5 4"/><text x="${x0 + ((0 - min) / (max - min)) * width + 6}" y="56" fill="${COLORS.orange}" font-size="10" font-weight="900">TERME</text>` : '';
-  return `<svg viewBox="0 0 740 238"><path d="${top} ${bottom} Z" fill="${color}" fill-opacity=".24" stroke="${color}" stroke-width="2"/>${dots}${termLine}<line x1="${x0}" y1="202" x2="${x0 + width}" y2="202" stroke="#9eb1c7"/>${ticks}</svg>`;
+  const termLine = isDate && min <= 0 && max >= 0 ? `<line x1="${x0 + ((0 - min) / (max - min)) * width}" y1="24" x2="${x0 + ((0 - min) / (max - min)) * width}" y2="118" stroke="${COLORS.orange}" stroke-width="2" stroke-dasharray="5 4"/><text x="${x0 + ((0 - min) / (max - min)) * width + 6}" y="36" fill="${COLORS.orange}" font-size="10" font-weight="900">TERME</text>` : '';
+  return `<svg viewBox="0 0 740 150"><path d="${top} ${bottom} Z" fill="${color}" fill-opacity=".24" stroke="${color}" stroke-width="2"/>${dots}${termLine}<line x1="${x0}" y1="118" x2="${x0 + width}" y2="118" stroke="#9eb1c7"/>${ticks}</svg>`;
 }
 function stackedDistributions(tickets) {
   const items = [
@@ -198,7 +197,7 @@ function stackedDistributions(tickets) {
     { type: 'weight', title: 'Poids', note: 'Axe en kg' },
     { type: 'height', title: 'Taille', note: 'Axe en cm' },
   ];
-  return `<div class="c2-stack">${items.map((item) => `<div class="c2-density-row"><div class="c2-density-label"><b>${item.title}</b><span>${item.note}</span></div><div>${densitySvg(tickets, item.type)}</div></div>`).join('')}</div><div class="c2-note">Chaque point représente un pari individuel. La bande montre la zone de concentration.</div>`;
+  return `<div class="c2-stack">${items.map((item) => `<div class="c2-density-row"><div class="c2-density-label"><b>${item.title}</b><span>${item.note}</span></div>${densitySvg(tickets, item.type)}</div>`).join('')}</div><div class="c2-note">Chaque point représente un pari individuel. La bande montre la zone de concentration.</div>`;
 }
 function boxplotSvg(tickets) {
   const sets = [
@@ -290,7 +289,7 @@ function renderDataLab(tickets) {
   document.querySelector('.data-lab-panel')?.remove();
   const panel = document.createElement('section');
   panel.className = 'data-lab-panel c2';
-  panel.innerHTML = `<div class="panel-title"><span>📊</span><div><h2>Data Lab</h2><p>ACP 3D et distributions empilées des paris.</p></div></div><div class="c2-grid">${card('Distributions date / poids / taille', 'Même logique visuelle pour les trois dimensions principales.', stackedDistributions(enriched), 'full')}${card('ACP 3D manipulable', 'Drag souris/doigt pour tourner. Couleur = cluster, taille = message laissé.', `<div class="c2-canvas-wrap"><div class="c2-toolbar"><button data-c2-auto>Auto</button><button data-c2-zoom-in>Zoom +</button><button data-c2-zoom-out>Zoom -</button><button data-c2-reset>Reset</button></div><canvas id="c2-pca3d"></canvas><div class="c2-tooltip"><b>Lecture</b> · PC1 = tendance date/poids, PC2 = contraste morphologique, PC3 = dispersion résiduelle.</div></div><div class="c2-legend">${renderLegend(enriched)}</div>`, 'full')}${card('Boxplots expliqués', 'Rectangle = 50% des paris, trait = médiane, points = min/max.', `<div class="c2-boxplot">${boxplotSvg(enriched)}</div>`, 'full')}</div>`;
+  panel.innerHTML = `<div class="panel-title"><span>📊</span><div><h2>Data Lab</h2><p>Distributions et boxplots en miroir, puis ACP 3D.</p></div></div><div class="c2-grid">${card('Distributions date / poids / taille', 'Trois distributions empilées dans la même carte.', stackedDistributions(enriched), 'half')}${card('Boxplots expliqués', 'Trois boxplots empilés dans la carte miroir.', `<div class="c2-boxplot">${boxplotSvg(enriched)}</div>`, 'half')}${card('ACP 3D manipulable', 'Drag souris/doigt pour tourner. Couleur = cluster, taille = message laissé.', `<div class="c2-canvas-wrap"><div class="c2-toolbar"><button data-c2-auto>Auto</button><button data-c2-zoom-in>Zoom +</button><button data-c2-zoom-out>Zoom -</button><button data-c2-reset>Reset</button></div><canvas id="c2-pca3d"></canvas><div class="c2-tooltip"><b>Lecture</b> · PC1 = tendance date/poids, PC2 = contraste morphologique, PC3 = dispersion résiduelle.</div></div><div class="c2-legend">${renderLegend(enriched)}</div>`, 'full')}</div>`;
   const admin = document.querySelector('.admin-panel');
   if (admin) admin.insertAdjacentElement('beforebegin', panel);
   else document.querySelector('.app-grid')?.appendChild(panel);
@@ -304,7 +303,11 @@ function enhance() {
   renderDataLab(tickets);
 }
 let scheduled = false;
-function scheduleEnhance() { if (scheduled) return; scheduled = true; requestAnimationFrame(() => { scheduled = false; enhance(); }); }
+function scheduleEnhance() {
+  if (scheduled) return;
+  scheduled = true;
+  requestAnimationFrame(() => { scheduled = false; enhance(); });
+}
 const boot = setInterval(() => { if (document.querySelector('.ticket')) { clearInterval(boot); enhance(); } }, 250);
 setTimeout(() => clearInterval(boot), 10000);
 new MutationObserver(scheduleEnhance).observe(document.getElementById('root') || document.body, { childList: true, subtree: true });
