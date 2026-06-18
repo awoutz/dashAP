@@ -1,3 +1,5 @@
+import './guestbook-safe.js';
+
 function injectTicketResponsiveFix(){
   if (document.getElementById('ticket-responsive-fix-style')) return;
   const style = document.createElement('style');
