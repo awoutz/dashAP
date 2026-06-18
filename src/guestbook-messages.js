@@ -3,20 +3,35 @@ const SUPABASE_KEY = 'sb_publishable_3x3PgMOTCmGx8HySJ-zDmw_kfdbfFpg';
 
 let guestMessages = [];
 let loading = false;
+let renderQueued = false;
+
+function scheduleRender() {
+  if (renderQueued || !guestMessages.length) return;
+  renderQueued = true;
+  queueMicrotask(() => {
+    renderQueued = false;
+    renderGuestMessages();
+  });
+}
 
 async function loadGuestMessages() {
   if (loading || guestMessages.length) return;
   loading = true;
+
   try {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/guestbook_messages?select=id,player,note,sort_order,created_at&order=sort_order.asc`, {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`,
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/guestbook_messages?select=id,player,note,sort_order,created_at&order=sort_order.asc`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+        },
       },
-    });
+    );
+
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     guestMessages = await response.json();
-    renderGuestMessages();
+    scheduleRender();
   } catch (error) {
     console.error('Impossible de charger les messages de la cagnotte', error);
   } finally {
@@ -30,16 +45,25 @@ function renderGuestMessages() {
   if (!panel || !wall || !guestMessages.length) return;
 
   const subtitle = panel.querySelector('.panel-title p');
-  if (subtitle) subtitle.textContent = 'Les messages des paris et de la cagnotte sont réunis ici.';
+  const subtitleText = 'Les messages des paris et de la cagnotte sont réunis ici.';
+  if (subtitle && subtitle.textContent !== subtitleText) subtitle.textContent = subtitleText;
 
-  wall.querySelectorAll('[data-guestbook-message]').forEach((node) => node.remove());
   const empty = wall.querySelector('.empty-state');
   if (empty) empty.remove();
 
+  const renderedIds = new Set(
+    [...wall.querySelectorAll('[data-guestbook-message]')]
+      .map((node) => node.dataset.guestbookMessage)
+      .filter(Boolean),
+  );
+
   guestMessages.forEach((item) => {
+    const id = String(item.id);
+    if (renderedIds.has(id)) return;
+
     const card = document.createElement('article');
     card.className = 'message-card';
-    card.dataset.guestbookMessage = String(item.id);
+    card.dataset.guestbookMessage = id;
 
     const author = document.createElement('b');
     author.textContent = item.player;
@@ -54,10 +78,7 @@ function renderGuestMessages() {
 }
 
 const observer = new MutationObserver(() => {
-  if (document.querySelector('.message-wall-panel')) {
-    loadGuestMessages();
-    renderGuestMessages();
-  }
+  scheduleRender();
 });
 
 observer.observe(document.documentElement, { childList: true, subtree: true });
