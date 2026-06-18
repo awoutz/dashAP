@@ -1,0 +1,1 @@
+Guestbook messages must be merged with ticket messages in the message wall.
